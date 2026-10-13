@@ -17,7 +17,7 @@ export const site = {
   tagline: 'Transforming Spaces, One Coat at a Time.',
 
   /** Your live website address, no slash at the end. Used for SEO (canonical URLs, sitemap). */
-  url: 'https://www.your-domain.com',
+  url: 'https://nimble-sable-a57690.netlify.app',
 
   /** Default description shown in Google results when a page doesn't have its own. */
   description:
