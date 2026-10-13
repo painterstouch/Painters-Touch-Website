@@ -1,0 +1,128 @@
+---
+import '../styles/global.css';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBar from '../components/MobileBar.astro';
+import { site } from '../config/site';
+import { getAreas, getReviews, getServices } from '../lib/data';
+import { localBusinessSchema, websiteSchema } from '../lib/schema';
+import { absoluteUrl, jsonLd } from '../lib/utils';
+
+interface Props {
+  /** Full <title>, e.g. "Interior Painters in Astoria | Name". Keep under ~60 characters. */
+  title: string;
+  /** Meta description. Keep under ~160 characters. */
+  description: string;
+  /** Extra JSON-LD objects for this page (Service, FAQPage ...). Breadcrumbs add their own. */
+  schema?: object[];
+  /** Hide the page from Google (thank-you page, 404). */
+  noindex?: boolean;
+  /** Skip the business schema (only for utility pages). */
+  noBusinessSchema?: boolean;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+}
+
+const {
+  title,
+  description,
+  schema = [],
+  noindex = false,
+  noBusinessSchema = false,
+  ogType = 'website',
+  ogImage = site.ogImage,
+} = Astro.props;
+
+const canonical = absoluteUrl(Astro.url.pathname);
+const image = absoluteUrl(ogImage);
+
+const [areas, services, reviews] = await Promise.all([getAreas(), getServices(), getReviews()]);
+const graph = noBusinessSchema
+  ? schema
+  : [localBusinessSchema({ areas, services, reviews }), websiteSchema(), ...schema];
+
+// Brand colors from site.ts (only valid hex codes are accepted).
+const hex = /^#[0-9a-f]{3,8}$/i;
+const { ink, accent, taupe, plaster } = site.brand;
+const brandCss = [
+  hex.test(ink) && `--color-ink:${ink}`,
+  hex.test(accent) && `--color-tape:${accent}`,
+  hex.test(taupe) && `--color-stoop:${taupe}`,
+  hex.test(plaster) && `--color-plaster:${plaster}`,
+]
+  .filter(Boolean)
+  .join(';');
+
+const ga = site.analytics.ga4MeasurementId;
+const gsc = site.analytics.googleSiteVerification;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    <meta name="theme-color" content={site.brand.plaster} />
+    {gsc && <meta name="google-site-verification" content={gsc} />}
+
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
+
+    {/* Open Graph / Twitter */}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}: ${site.tagline}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    {brandCss && <style is:inline set:html={`html:root{${brandCss}}`} />}
+
+    {graph.map((item) => <script type="application/ld+json" set:html={jsonLd(item)} />)}
+
+    {
+      ga && (
+        <>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} />
+          <script is:inline define:vars={{ ga }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', ga);
+          </script>
+        </>
+      )
+    }
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-sm focus:bg-ink focus:px-4 focus:py-3 focus:font-bold focus:text-white"
+    >
+      Skip to content
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <MobileBar />
+  </body>
+</html>

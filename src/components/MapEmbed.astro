@@ -1,0 +1,24 @@
+---
+interface Props {
+  /** What to show on the map, e.g. "Astoria, Queens, NY". */
+  query: string;
+  title: string;
+  /** Google Maps zoom level: 9 shows a whole region, 13 shows one neighborhood. Leave out to let Google choose. */
+  zoom?: number;
+  class?: string;
+}
+const { query, title, zoom, class: className = '' } = Astro.props;
+// Google Maps embed: no API key needed. The map only loads when it scrolls near the screen.
+const src = `https://www.google.com/maps?q=${encodeURIComponent(query)}${zoom ? `&z=${zoom}` : ''}&output=embed`;
+---
+
+<div class:list={['overflow-hidden rounded-[2px] border border-line bg-white', className]}>
+  <iframe
+    src={src}
+    title={title}
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    class="block h-[22rem] w-full border-0 sm:h-[26rem]"
+    allowfullscreen
+  ></iframe>
+</div>

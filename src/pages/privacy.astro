@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../config/site';
+import { pageTitle } from '../lib/utils';
+
+const usesAnalytics = Boolean(site.analytics.ga4MeasurementId);
+---
+
+<BaseLayout title={pageTitle('Privacy Policy')} description={`How ${site.name} collects, uses and protects the information you share when you request a painting quote on this website.`}>
+  <PageHeader title="Privacy policy" lead={`Last updated ${site.privacyUpdated}.`} crumbs={[{ name: 'Privacy Policy', href: '/privacy/' }]} />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose-site">
+        <p>
+          This policy explains what information {site.name} (“we”, “us”) collects through this website and how we use it.
+        </p>
+
+        <h2>What we collect</h2>
+        <p>
+          When you request a quote, we collect the details you enter in the form: your name, phone number, email address,
+          address or neighborhood, project details, preferred start date, and an optional photo and message. If you email
+          or call us, we keep a record of that conversation.
+        </p>
+
+        <h2>How we use it</h2>
+        <p>
+          We use your information only to reply to your request, prepare a quote, schedule and carry out work you have
+          asked for, and keep records of our business. We do not sell your information.
+        </p>
+
+        <h2>Who handles it</h2>
+        <p>
+          {
+            site.form.provider === 'netlify'
+              ? 'Form submissions are processed by Netlify, our website host, and delivered to us by email.'
+              : 'Form submissions are processed by Formspree and delivered to us by email.'
+          }
+          We may use other service providers, such as email and scheduling tools, to run our business. They may only use your
+          information to provide those services to us.
+        </p>
+
+        <h2>Analytics and cookies</h2>
+        {
+          usesAnalytics ? (
+            <p>
+              We use Google Analytics to understand how people use this website, such as which pages are visited. Google
+              Analytics uses cookies and collects information like your approximate location and device type. You can opt out
+              with the Google Analytics Opt-out Browser Add-on or by changing your browser’s cookie settings.
+            </p>
+          ) : (
+            <p>This website does not currently use analytics or advertising cookies.</p>
+          )
+        }
+        <p>
+          The map on our service areas pages is provided by Google Maps. Loading it may set cookies and share your IP address
+          with Google, subject to Google’s own privacy policy.
+        </p>
+
+        <h2>How long we keep it</h2>
+        <p>
+          We keep quote requests and project records for as long as we need them to run our business and meet legal
+          obligations, then delete them.
+        </p>
+
+        <h2>Your choices</h2>
+        <p>
+          You can ask us to see, correct or delete the information we hold about you at any time by emailing
+          <a href={`mailto:${site.email}`}>{site.email}</a> or calling {site.phone}.
+        </p>
+
+        <h2>Changes</h2>
+        <p>If we change this policy, we will post the new version on this page and update the date above.</p>
+
+        <h2>Contact</h2>
+        <p>{site.name}, {site.address.city}, {site.address.region}. Email <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

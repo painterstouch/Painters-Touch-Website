@@ -1,0 +1,26 @@
+---
+import { site } from '../config/site';
+
+const items = [
+  { value: site.trust.yearsInBusiness, label: 'years in business' },
+  { value: site.trust.jobsCompleted, label: 'projects completed' },
+  { value: 'Flat-rate', label: 'quotes, no surprise hourly bills' },
+  { value: 'On time', label: 'we show up when we say we will' },
+  ...(site.trust.insured ? [{ value: 'Fully insured', label: 'liability coverage on every job' }] : []),
+];
+---
+
+<section aria-label="Why customers choose us" class="band-white border-y border-line">
+  <div class="wrap py-6 sm:py-10">
+    <dl class="grid grid-cols-2 gap-x-5 gap-y-5 sm:gap-x-8 sm:gap-y-6 lg:[grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))]">
+      {
+        items.map((item) => (
+          <div class="border-l-[3px] border-tape pl-3 sm:pl-4">
+            <dt class="text-[1.25rem] leading-tight font-extrabold tracking-tight sm:text-[1.5rem]" style="font-stretch:115%">{item.value}</dt>
+            <dd class="mt-1 text-sm text-ink-soft">{item.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

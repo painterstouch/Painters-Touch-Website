@@ -1,0 +1,50 @@
+---
+/** Which paint finish for which surface. Flat to gloss, with the highlight getting sharper. */
+const sheens = [
+  { name: 'Flat', use: 'Ceilings, and walls with imperfections. Hides flaws best, marks easily.', glow: 0, width: 0 },
+  { name: 'Matte', use: 'Low-traffic walls like bedrooms and offices. Soft, velvety look.', glow: 0.1, width: 36 },
+  { name: 'Eggshell', use: 'The everyday wall finish for living rooms and hallways. Gentle glow.', glow: 0.2, width: 28 },
+  { name: 'Satin', use: 'Kitchens, baths and kids’ rooms. Wipes clean without looking shiny.', glow: 0.34, width: 22 },
+  { name: 'Semi-gloss', use: 'Trim, doors and window frames. Tough, easy to wash.', glow: 0.55, width: 16 },
+  { name: 'Gloss', use: 'Statement pieces like a front door. Mirror-bright and very durable.', glow: 0.8, width: 10 },
+];
+---
+
+<div>
+  <ul class="grid gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
+    {
+      sheens.map((s) => (
+        <li>
+          <div
+            class="sheen-tile"
+            style={`--glow:${s.glow};--w:${s.width}%`}
+            aria-hidden="true"
+          />
+          <h3 class="mt-3 text-lg">{s.name}</h3>
+          <p class="mt-1 text-sm text-ink-soft">{s.use}</p>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .sheen-tile {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-tape);
+  }
+  .sheen-tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent calc(46% - var(--w)),
+      rgb(255 255 255 / var(--glow)) 46%,
+      transparent calc(46% + var(--w))
+    );
+  }
+</style>

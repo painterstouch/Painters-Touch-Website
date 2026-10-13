@@ -1,0 +1,192 @@
+---
+import { render } from 'astro:content';
+import { Picture, getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getAreas, getProjects, getServices } from '../../lib/data';
+import { pageTitle } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const [allProjects, services, areas] = await Promise.all([getProjects(), getServices(), getAreas()]);
+const service = services.find((s) => s.id === data.service);
+const area = areas.find((a) => a.id === data.area);
+// Four related projects (a tidy 2 x 2 on phones); the three-column desktop layout hides the fourth.
+const more = allProjects.filter((p) => p.id !== project.id && p.data.roomType === data.roomType).slice(0, 4);
+
+// Portrait phone photos get a narrower slider with the description beside it.
+const isPortrait = data.after.height > data.after.width;
+const beforeAlt = data.beforeAlt ?? `${data.title} in ${data.location} before painting`;
+const afterAlt = data.afterAlt ?? `${data.title} in ${data.location} after painting`;
+
+// Every photo, with a large version for the lightbox.
+const photoDefs = [
+  ...(data.before ? [{ src: data.before, alt: beforeAlt, label: 'Before' }] : []),
+  { src: data.after, alt: afterAlt, label: data.before ? 'After' : data.title },
+  ...data.gallery.map((g) => ({ src: g.src, alt: g.alt, label: g.alt })),
+];
+const photos = await Promise.all(
+  photoDefs.map(async (p) => ({ ...p, full: (await getImage({ src: p.src, width: 1800, format: 'webp' })).src })),
+);
+---
+
+<BaseLayout
+  title={pageTitle(`${data.title}, ${data.location.split(',')[0]}`)}
+  description={`${data.title}, ${data.location}. ${data.before ? 'See the before and after photos and what went into the job.' : 'See the finished photos and what went into the job.'}`}
+  ogType="article"
+>
+  <PageHeader
+    title={data.title}
+    crumbs={[
+      { name: 'Our Work', href: '/work/' },
+      { name: data.title, href: `/work/${project.id}/` },
+    ]}
+  >
+    <dl class="mt-6 flex flex-wrap gap-x-10 gap-y-3 text-[0.95rem]">
+      <div>
+        <dt class="text-ink-soft">Location</dt>
+        <dd class="font-bold">
+          {area ? <a href={`/areas/${area.id}/`} class="underline decoration-ink/30 hover:decoration-ink">{data.location}</a> : data.location}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-ink-soft">Room</dt>
+        <dd class="font-bold">{data.roomType}</dd>
+      </div>
+      {
+        service && (
+          <div>
+            <dt class="text-ink-soft">Service</dt>
+            <dd class="font-bold">
+              <a href={`/services/${service.id}/`} class="underline decoration-ink/30 hover:decoration-ink">{service.data.title}</a>
+            </dd>
+          </div>
+        )
+      }
+    </dl>
+  </PageHeader>
+
+  <section class="section">
+    <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-14">
+      <div class:list={[isPortrait ? 'lg:col-span-5' : 'lg:col-span-8']}>
+        {
+          data.before ? (
+            <BeforeAfter
+              before={data.before}
+              after={data.after}
+              {beforeAlt}
+              {afterAlt}
+              sizes={isPortrait ? '(min-width: 1024px) 480px, 100vw' : '(min-width: 1024px) 760px, 100vw'}
+              eager
+            />
+          ) : (
+            // One main photo. Clicking it opens the photo viewer with every photo in the project.
+            <a
+              href={photos[0].full}
+              data-lightbox
+              data-caption={photos[0].label}
+              data-alt={photos[0].alt}
+              aria-label={photos.length > 1 ? `View all ${photos.length} photos` : 'View photo full size'}
+              class:list={['relative block overflow-hidden rounded-[2px] bg-stoop', photos.length > 1 && 'cursor-zoom-in']}
+            >
+              <Picture
+                src={data.after}
+                alt={afterAlt}
+                formats={['avif', 'webp']}
+                widths={[480, 640, 800, 1200, 1600]}
+                sizes={isPortrait ? '(min-width: 1024px) 480px, 100vw' : '(min-width: 1024px) 760px, 100vw'}
+                loading="eager"
+                fetchpriority="high"
+                class:list={['w-full object-cover', isPortrait ? 'aspect-[4/5]' : 'aspect-[4/3]']}
+                pictureAttributes={{ class: 'contents' }}
+              />
+              {photos.length > 1 && (
+                <span class="absolute right-3 bottom-3 rounded-[2px] bg-ink/90 px-2.5 py-1.5 text-[0.8125rem] font-bold text-white">
+                  View all {photos.length} photos
+                </span>
+              )}
+            </a>
+          )
+        }
+        {
+          data.before && (
+            <p class="mt-3 text-sm text-ink-soft">
+              <span class="sm:hidden">Drag the slider to compare.</span>
+              <span class="hidden sm:inline">Drag the slider, or use the left and right arrow keys, to compare.</span>
+            </p>
+          )
+        }
+      </div>
+
+      <div class:list={[isPortrait ? 'lg:col-span-7' : 'lg:col-span-4']}>
+        {
+          data.sample && (
+            <p class="mb-6 border-l-4 border-brownstone bg-white p-4 text-sm">
+              <strong>Sample project.</strong> This is placeholder content. Replace it with your own project and photos.
+            </p>
+          )
+        }
+        <div class="prose-site">
+          <Content />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-white section" aria-labelledby="photos-heading">
+    <div class="wrap">
+      <h2 id="photos-heading" class="text-3xl">All photos</h2>
+      <p class="mt-3 text-ink-soft">Select a photo to view it full size.</p>
+      <ul class="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+        {
+          photos.map((photo) => (
+            <li>
+              <a href={photo.full} data-lightbox data-caption={photo.label} data-alt={photo.alt} class="group block overflow-hidden rounded-[2px] bg-stoop">
+                <Picture
+                  src={photo.src}
+                  alt={photo.alt}
+                  formats={['avif', 'webp']}
+                  widths={[320, 480, 640]}
+                  sizes="(min-width: 1024px) 256px, (min-width: 640px) 33vw, 50vw"
+                  loading="lazy"
+                  fetchpriority="low"
+                  class="aspect-[4/5] w-full object-cover transition-transform duration-300 group-hover:scale-[1.04] motion-reduce:transition-none"
+                  pictureAttributes={{ class: 'contents' }}
+                />
+              </a>
+              {/* The long photo descriptions are hidden on phones (the photo itself has the description for screen readers). */}
+              <p class="mt-2 hidden text-sm font-semibold sm:block">{photo.label}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    more.length > 0 && (
+      <section class="section" aria-labelledby="more-heading">
+        <div class="wrap">
+          <h2 id="more-heading" class="max-w-2xl">More {data.roomType.toLowerCase()} projects</h2>
+          <ul class="mt-8 grid grid-cols-2 gap-x-3 gap-y-7 sm:mt-10 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3">
+            {more.map((p) => <li class="lg:[&:nth-child(4)]:hidden"><ProjectCard project={p} /></li>)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand service={service?.id} />
+  <Lightbox />
+</BaseLayout>

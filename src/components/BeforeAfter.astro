@@ -1,0 +1,188 @@
+---
+import { Picture } from 'astro:assets';
+
+interface Props {
+  before: ImageMetadata;
+  after: ImageMetadata;
+  beforeAlt: string;
+  afterAlt: string;
+  /** Responsive `sizes` attribute, so phones download small files. */
+  sizes?: string;
+  /** Load immediately (use only for images at the very top of a page). */
+  eager?: boolean;
+  /** Shape of the slider as a CSS aspect-ratio, e.g. "4 / 5". Leave out to follow the "after" photo. */
+  aspect?: string;
+  class?: string;
+}
+const {
+  before,
+  after,
+  beforeAlt,
+  afterAlt,
+  sizes = '(min-width: 1024px) 560px, 100vw',
+  eager = false,
+  aspect,
+  class: className = '',
+} = Astro.props;
+
+// Follow the photo's own shape (portrait phone photos stay portrait), within sensible limits.
+const ratio = Math.min(1.5, Math.max(0.7, after.width / after.height));
+const stageAspect = aspect ?? ratio.toFixed(3);
+const widths = [480, 640, 800, 1200, 1600];
+const common = {
+  formats: ['avif', 'webp'] as ('avif' | 'webp')[],
+  widths,
+  sizes,
+  loading: eager ? ('eager' as const) : ('lazy' as const),
+  // The slider at the top of a page is the first thing seen: fetch it before anything else.
+  fetchpriority: eager ? ('high' as const) : ('auto' as const),
+  decoding: 'async' as const,
+  class: 'ba-img',
+  pictureAttributes: { class: 'contents' },
+};
+---
+
+<div class:list={['ba', className]} data-ba style="--pos:50%">
+  <div class="ba-stage" style={`aspect-ratio:${stageAspect}`}>
+    <Picture src={after} alt={afterAlt} {...common} />
+    <div class="ba-before" aria-hidden="false">
+      <Picture src={before} alt={beforeAlt} {...common} />
+    </div>
+    <span class="ba-tag ba-tag-before">Before</span>
+    <span class="ba-tag ba-tag-after">After</span>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      step="1"
+      value="50"
+      class="ba-range"
+      aria-label="Compare before and after. Move the slider to reveal more of the before photo."
+    />
+    <div class="ba-handle" aria-hidden="true">
+      <span class="ba-knob">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 6 3 12 9 18"></polyline>
+          <polyline points="15 6 21 12 15 18"></polyline>
+        </svg>
+      </span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ba-stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-stoop);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .ba :global(.ba-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ba-before {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .ba-tag {
+    position: absolute;
+    top: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    background: rgb(23 23 25 / 0.88);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    pointer-events: none;
+  }
+  .ba-tag-before {
+    left: 0.75rem;
+  }
+  .ba-tag-after {
+    right: 0.75rem;
+  }
+  .ba-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 3px;
+    margin-left: -1.5px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(23 23 25 / 0.25);
+    pointer-events: none;
+  }
+  .ba-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-ink);
+    box-shadow: 0 2px 8px rgb(23 23 25 / 0.35);
+  }
+  .ba-range {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    touch-action: pan-y;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+  }
+  .ba-range::-webkit-slider-runnable-track {
+    height: 100%;
+    background: transparent;
+  }
+  .ba-range::-moz-range-track {
+    height: 100%;
+    background: transparent;
+  }
+  .ba-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 2.75rem;
+    height: 100%;
+    background: transparent;
+  }
+  .ba-range::-moz-range-thumb {
+    width: 2.75rem;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+  .ba-range:focus-visible ~ .ba-handle .ba-knob {
+    outline: 3px solid var(--color-tape);
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((el) => {
+    const input = el.querySelector<HTMLInputElement>('.ba-range');
+    if (!input) return;
+    const update = () => {
+      el.style.setProperty('--pos', `${input.value}%`);
+      input.setAttribute('aria-valuetext', `${input.value}% of the before photo is showing`);
+    };
+    input.addEventListener('input', update);
+    update();
+  });
+</script>

@@ -1,0 +1,20 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  rating: number;
+  size?: number;
+  class?: string;
+}
+const { rating, size = 20, class: className = '' } = Astro.props;
+---
+
+<span class:list={['inline-flex gap-0.5 text-tape', className]} role="img" aria-label={`${rating} out of 5 stars`}>
+  {
+    [1, 2, 3, 4, 5].map((n) => (
+      <span class={n <= Math.round(rating) ? '' : 'opacity-25'}>
+        <Icon name="star" size={size} />
+      </span>
+    ))
+  }
+</span>

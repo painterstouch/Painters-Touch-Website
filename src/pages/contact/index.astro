@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../config/site';
+import { formatHours, pageTitle, phoneHref } from '../../lib/utils';
+
+const hours = formatHours();
+const a = site.address;
+---
+
+<BaseLayout
+  title={pageTitle('Free Painting Quote in NYC')}
+  description="Request a free, flat-rate painting quote in NYC. Tell us about your rooms and we reply within one business day. Call, email or use the form."
+>
+  <PageHeader
+    title="Get a free painting quote"
+    lead="Tell us about your rooms and send a photo if you can. We’ll reply with a flat-rate price, not an hourly estimate."
+    crumbs={[{ name: 'Free Quote', href: '/contact/' }]}
+  />
+
+  <section class="section">
+    <div class="wrap grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-7">
+        <h2 class="sr-only">Quote request form</h2>
+        <QuoteForm />
+      </div>
+
+      <aside class="lg:col-span-5" aria-label="Contact details">
+        <div class="border border-line bg-white p-6 sm:p-8">
+          <h2 class="text-2xl">Prefer to talk?</h2>
+          <ul class="mt-4 space-y-2">
+            <li>
+              <a href={phoneHref()} class="flex min-h-12 items-center gap-3 text-xl font-extrabold no-underline hover:underline" style="font-stretch:112%">
+                <Icon name="phone" size={22} class="text-tape" />
+                {site.phone}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${site.email}`} class="flex min-h-12 items-center gap-3 font-semibold break-all no-underline hover:underline">
+                <Icon name="mail" size={22} class="flex-none text-tape" />
+                {site.email}
+              </a>
+            </li>
+            <li>
+              <a href={site.social.instagram} target="_blank" rel="noopener" class="flex min-h-12 items-center gap-3 font-semibold no-underline hover:underline">
+                <Icon name="instagram" size={22} class="text-tape" />
+                Instagram
+              </a>
+            </li>
+            <li class="flex items-start gap-3 pt-3">
+              <Icon name="pin" size={22} class="mt-0.5 flex-none text-tape" />
+              <span>
+                {a.show && a.street ? `${a.street}, ` : ''}{a.city}, {a.region}{a.show && a.postalCode ? ` ${a.postalCode}` : ''}
+                <span class="block text-sm text-ink-soft">Serving {site.areaSummary}</span>
+              </span>
+            </li>
+            <li class="flex items-start gap-3 pt-3">
+              <Icon name="clock" size={22} class="mt-0.5 flex-none text-tape" />
+              <span>
+                {hours.map((h) => <span class="block">{h.label}: {h.time}</span>)}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-8">
+          <h2 class="text-2xl">What happens next</h2>
+          <ol class="mt-5 space-y-4">
+            <li class="flex gap-4">
+              <span class="chip-bar" style="--chip:var(--color-hudson)" aria-hidden="true"></span>
+              <p><strong>We reply within {site.replyTime}.</strong> Sometimes with a question, sometimes with a time to see the space.</p>
+            </li>
+            <li class="flex gap-4">
+              <span class="chip-bar" style="--chip:var(--color-stoop)" aria-hidden="true"></span>
+              <p><strong>You get a flat-rate price in writing.</strong> One number for prep, paint and clean-up.</p>
+            </li>
+            <li class="flex gap-4">
+              <span class="chip-bar" style="--chip:var(--color-park)" aria-hidden="true"></span>
+              <p><strong>You pick the dates.</strong> We show up on time and protect your furniture and floors.</p>
+            </li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

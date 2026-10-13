@@ -1,0 +1,23 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { phoneHref } from '../lib/utils';
+
+// On the quote page the visitor is already filling in the quote form, so the bar only offers the phone.
+const onQuotePage = Astro.url.pathname.startsWith('/contact/');
+---
+
+{/* Sticky Call / Quote bar on phones and small tablets */}
+<nav
+  aria-label="Quick contact"
+  class:list={[
+    'mobile-bar fixed inset-x-0 bottom-0 z-40 grid gap-2 border-t border-line bg-white p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] lg:hidden',
+    onQuotePage ? 'grid-cols-1' : 'grid-cols-2',
+  ]}
+>
+  <a href={phoneHref()} class="btn btn-outline btn-sm !text-ink">
+    <Icon name="phone" size={18} />
+    {onQuotePage ? `Call ${site.phone}` : 'Call'}
+  </a>
+  {!onQuotePage && <a href="/contact/" class="btn btn-primary btn-sm">Free Quote</a>}
+</nav>

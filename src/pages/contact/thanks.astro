@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../config/site';
+import { phoneHref } from '../../lib/utils';
+---
+
+<BaseLayout title={`Thank you | ${site.name}`} description="Your quote request was sent." noindex noBusinessSchema>
+  <section class="section">
+    <div class="wrap">
+      <div class="max-w-2xl border-l-4 border-tape bg-white p-6 sm:p-10" role="status">
+        <h1 class="text-3xl sm:text-4xl">Thanks. Your request is in.</h1>
+        <p class="lead mt-5">
+          We’ll reply within {site.replyTime} with questions or a time to see the space, then send your flat-rate price.
+        </p>
+        <p class="mt-4">Need us sooner? Call <a href={phoneHref()} class="link">{site.phone}</a>.</p>
+        <a href="/" class="btn btn-ink mt-8">Back to the home page</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

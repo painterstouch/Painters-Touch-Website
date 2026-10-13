@@ -1,0 +1,121 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { getAreasByRegion, getServices } from '../lib/data';
+import { formatHours, phoneHref, regionSlug } from '../lib/utils';
+
+const [services, regionGroups] = await Promise.all([getServices(), getAreasByRegion()]);
+const areaCount = regionGroups.reduce((n, [, list]) => n + list.length, 0);
+const hours = formatHours();
+const social = [
+  { label: 'Instagram', href: site.social.instagram },
+  { label: 'Google Business Profile', href: site.social.googleBusinessProfile },
+  { label: 'Facebook', href: site.social.facebook },
+  { label: 'Yelp', href: site.social.yelp },
+].filter((s) => s.href);
+const year = new Date().getFullYear();
+const a = site.address;
+
+// Footer links: roomy tap areas on phones, tight list on desktop.
+const linkClass = 'block py-2.5 text-white/85 no-underline hover:text-white hover:underline md:py-0';
+---
+
+<footer class="band-dark">
+  <div class="wrap section-tight grid grid-cols-2 gap-x-6 gap-y-10 pt-12 md:grid-cols-12 md:gap-8 md:pt-14">
+    <div class="col-span-2 md:col-span-4">
+      <a href="/" class="inline-block rounded-sm no-underline" aria-label={`${site.name}, home`}>
+        <Logo light />
+      </a>
+      <p class="mt-4 max-w-xs text-[0.95rem] text-white/80">
+        {site.tagline}
+      </p>
+      <address class="mt-5 text-[0.95rem] not-italic md:mt-6 md:space-y-2.5">
+        <p>
+          <a href={phoneHref()} class="inline-flex min-h-11 items-center gap-2.5 font-bold text-white no-underline hover:underline md:min-h-0">
+            <Icon name="phone" size={18} />
+            {site.phone}
+          </a>
+        </p>
+        <p>
+          <a href={`mailto:${site.email}`} class="inline-flex min-h-11 items-center gap-2.5 break-all text-white no-underline hover:underline md:min-h-0">
+            <Icon name="mail" size={18} />
+            {site.email}
+          </a>
+        </p>
+        <p class="flex items-start gap-2.5 py-1.5 text-white/85 md:py-0">
+          <Icon name="pin" size={18} class="mt-1 flex-none" />
+          <span>
+            {a.show && a.street ? `${a.street}, ` : ''}{a.city}, {a.region}{a.show && a.postalCode ? ` ${a.postalCode}` : ''}
+            {!a.show && <br />}
+            {!a.show && <span class="text-white/70">Serving {site.areaSummary}</span>}
+          </span>
+        </p>
+        <p class="flex items-start gap-2.5 py-1.5 text-white/85 md:py-0">
+          <Icon name="clock" size={18} class="mt-1 flex-none" />
+          <span>
+            {hours.map((h) => <span class="block">{h.label}: {h.time}</span>)}
+          </span>
+        </p>
+      </address>
+    </div>
+
+    <nav aria-label="Services" class="md:col-span-3">
+      <h2 class="text-base font-extrabold" style="font-stretch:112%">Services</h2>
+      <ul class="mt-2 text-[0.95rem] md:mt-4 md:space-y-2">
+        {
+          services.map((s) => (
+            <li>
+              <a href={`/services/${s.id}/`} class={linkClass}>
+                {s.data.shortTitle}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href="/work/" class={linkClass}>Our work</a></li>
+        <li><a href="/reviews/" class={linkClass}>Reviews</a></li>
+        <li><a href="/faq/" class={linkClass}>FAQ</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Service areas" class="md:col-span-3">
+      <h2 class="text-base font-extrabold" style="font-stretch:112%">Service areas</h2>
+      <ul class="mt-2 text-[0.95rem] md:mt-4 md:space-y-2">
+        {
+          regionGroups.map(([region]) => (
+            <li>
+              <a href={`/areas/#${regionSlug(region)}`} class={linkClass}>
+                {region}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href="/areas/" class="block py-2.5 font-semibold text-white no-underline hover:underline md:py-0">All {areaCount} neighborhoods</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Company" class="col-span-2 md:col-span-2">
+      <h2 class="text-base font-extrabold" style="font-stretch:112%">Company</h2>
+      <ul class="mt-2 grid grid-cols-2 gap-x-6 text-[0.95rem] md:mt-4 md:block md:space-y-2">
+        <li><a href="/about/" class={linkClass}>About</a></li>
+        <li><a href="/contact/" class={linkClass}>Free quote</a></li>
+        {
+          social.map((s) => (
+            <li>
+              <a href={s.href} rel="noopener" target="_blank" class={linkClass}>
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <div class="border-t border-white/15">
+    <div class="wrap flex flex-col gap-1 py-4 text-sm text-white/75 sm:flex-row sm:justify-between sm:py-5">
+      <p>&copy; {year} {site.name}. All rights reserved.</p>
+      <p><a href="/privacy/" class="inline-block py-3 text-white/85 no-underline hover:text-white hover:underline sm:py-0">Privacy policy</a></p>
+    </div>
+  </div>
+</footer>

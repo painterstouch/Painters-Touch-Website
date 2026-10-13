@@ -1,0 +1,54 @@
+---
+import { getAreasByRegion } from '../lib/data';
+import { regionSlug } from '../lib/utils';
+
+interface Props {
+  /** Show the nearby neighborhoods under each area name (full list only). */
+  showNearby?: boolean;
+  /** Short inline version for the home page. */
+  compact?: boolean;
+}
+const { showNearby = true, compact = false } = Astro.props;
+const groups = await getAreasByRegion();
+---
+
+<div>
+  {
+    groups.map(([region, areas]) => (
+      <div id={regionSlug(region)} class="grid gap-3 border-t border-line py-5 md:grid-cols-12 md:gap-8 md:py-6">
+        <h3 class="text-xl md:col-span-3 md:pt-1 md:text-2xl">{region}</h3>
+        {compact ? (
+          // Phones: each neighborhood is a thumb-sized chip. Larger screens: a plain line of links.
+          <ul class="flex flex-wrap gap-2 md:col-span-9 md:gap-x-7 md:gap-y-2 md:pt-1.5">
+            {areas.map((area) => (
+              <li>
+                <a
+                  href={`/areas/${area.id}/`}
+                  class="inline-flex min-h-11 items-center rounded-[2px] border border-ink/25 bg-plaster px-3.5 font-bold no-underline hover:border-ink md:min-h-0 md:border-0 md:bg-transparent md:px-0 md:hover:underline md:decoration-2 md:underline-offset-4"
+                >
+                  {area.data.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul class="grid gap-x-8 sm:grid-cols-2 md:col-span-9">
+            {areas.map((area) => (
+              <li class="border-b border-line last:border-b-0 sm:[&:nth-last-child(2):nth-child(odd)]:border-b-0">
+                {/* The whole row is the link, so it is easy to tap. */}
+                <a href={`/areas/${area.id}/`} class="group block py-3.5 no-underline">
+                  <span class="block text-lg font-bold group-hover:underline decoration-2 underline-offset-4">
+                    Painters in {area.data.name}
+                  </span>
+                  {showNearby && area.data.nearby.length > 0 && (
+                    <span class="block text-sm text-ink-soft">Also serving {area.data.nearby.slice(0, 3).join(', ')}</span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))
+  }
+</div>

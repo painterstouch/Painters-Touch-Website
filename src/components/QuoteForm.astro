@@ -1,0 +1,167 @@
+---
+import { site } from '../config/site';
+import { getServices } from '../lib/data';
+import { phoneHref } from '../lib/utils';
+
+const services = await getServices();
+const isNetlify = site.form.provider === 'netlify';
+const action = isNetlify ? '/contact/thanks/' : `https://formspree.io/f/${site.form.formspreeId}`;
+const honeypot = isNetlify ? 'bot-field' : '_gotcha';
+---
+
+<div data-quote-root>
+  <form
+    name="quote"
+    method="POST"
+    action={action}
+    enctype="multipart/form-data"
+    data-quote-form
+    data-provider={site.form.provider}
+    data-netlify={isNetlify ? 'true' : undefined}
+    netlify-honeypot={isNetlify ? 'bot-field' : undefined}
+    class="grid gap-5 sm:grid-cols-2"
+  >
+    {isNetlify && <input type="hidden" name="form-name" value="quote" />}
+
+    {/* Spam trap: people never see this field, bots fill it in. */}
+    <p class="hidden" aria-hidden="true">
+      <label>Leave this field empty <input name={honeypot} tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <div>
+      <label class="field-label" for="q-name">Name</label>
+      <input class="field" id="q-name" name="name" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" required />
+    </div>
+    <div>
+      <label class="field-label" for="q-phone">Phone</label>
+      <input class="field" id="q-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" required />
+    </div>
+    <div>
+      <label class="field-label" for="q-email">Email</label>
+      <input class="field" id="q-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next" required />
+    </div>
+    <div>
+      <label class="field-label" for="q-location">Address or neighborhood</label>
+      <input class="field" id="q-location" name="location" type="text" autocomplete="street-address" autocapitalize="words" enterkeyhint="next" required />
+    </div>
+    <div>
+      <label class="field-label" for="q-type">Project type</label>
+      <select class="field" id="q-type" name="project-type" required>
+        <option value="">Choose one</option>
+        {services.map((s) => <option value={s.data.title} data-slug={s.id}>{s.data.title}</option>)}
+        <option value="Not sure yet">Not sure yet</option>
+      </select>
+    </div>
+    <div>
+      <label class="field-label" for="q-date">Preferred start date <span class="font-normal text-ink-soft">(optional)</span></label>
+      <input class="field" id="q-date" name="start-date" type="date" />
+    </div>
+    <div class="sm:col-span-2">
+      <label class="field-label" for="q-scope">Rooms and scope</label>
+      <input
+        class="field"
+        id="q-scope"
+        name="scope"
+        type="text"
+        enterkeyhint="next"
+        placeholder="e.g. 2 bedrooms, living room and hallway, ceilings too"
+        required
+      />
+    </div>
+    <div class="sm:col-span-2">
+      <label class="field-label" for="q-photo">Photo <span class="font-normal text-ink-soft">(optional)</span></label>
+      <input class="field file:mr-4 file:rounded-[2px] file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-semibold file:text-white" id="q-photo" name="photo" type="file" accept="image/*" />
+      <span class="field-hint">One photo of the space helps us price it. Up to 8 MB. You can email more.</span>
+    </div>
+    <div class="sm:col-span-2">
+      <label class="field-label" for="q-message">Anything else we should know? <span class="font-normal text-ink-soft">(optional)</span></label>
+      <textarea class="field" id="q-message" name="message" rows="4"></textarea>
+    </div>
+
+    <div class="sm:col-span-2">
+      <p id="quote-error" class="mb-4 border-l-4 border-brownstone bg-white p-4 text-[0.95rem]" role="alert" hidden>
+        We couldn’t send your request. Please try again, or call us at
+        <a class="link" href={phoneHref()}>{site.phone}</a>.
+      </p>
+      <button type="submit" class="btn btn-primary w-full sm:w-auto" data-submit>Get my free quote</button>
+      <p class="field-hint mt-3">We only use your details to reply to your request. See our <a class="link" href="/privacy/">privacy policy</a>.</p>
+    </div>
+  </form>
+
+  <div id="quote-success" class="border-l-4 border-tape bg-white p-6 sm:p-8" role="status" tabindex="-1" hidden>
+    <h2 class="text-2xl sm:text-3xl">Thanks, <span data-first-name>friend</span>. Your request is in.</h2>
+    <p class="mt-4 max-w-xl">
+      We’ll reply within {site.replyTime} with questions or a time to see the space, then send your flat-rate price. Need us sooner?
+      Call <a class="link" href={phoneHref()}>{site.phone}</a>.
+    </p>
+    <p class="mt-4 hidden text-sm text-ink-soft" data-dev-note>
+      Local preview: nothing was actually sent. The form delivers email once the site is live on Netlify.
+    </p>
+    <a href="/" class="btn btn-ink mt-6">Back to the home page</a>
+  </div>
+</div>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+  if (form) {
+    const success = document.getElementById('quote-success')!;
+    const error = document.getElementById('quote-error')!;
+    const button = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const MAX_BYTES = 8 * 1024 * 1024;
+
+    // Pre-select the project type when arriving from a service page (?service=interior-painting).
+    const wanted = new URLSearchParams(location.search).get('service');
+    const select = form.querySelector<HTMLSelectElement>('select[name="project-type"]');
+    if (wanted && select) {
+      const option = [...select.options].find((o) => o.dataset.slug === wanted);
+      if (option) select.value = option.value;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      error.hidden = true;
+      if (!form.reportValidity()) return;
+
+      const photo = form.querySelector<HTMLInputElement>('input[type="file"]')?.files?.[0];
+      if (photo && photo.size > MAX_BYTES) {
+        error.textContent = 'That photo is over 8 MB. Please choose a smaller one, or skip it and email us the photo.';
+        error.hidden = false;
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      try {
+        const data = new FormData(form);
+        if (import.meta.env.DEV) {
+          // `npm run dev` has no form handler, so just simulate success while you are previewing.
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          success.querySelector('[data-dev-note]')?.classList.remove('hidden');
+        } else {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: data,
+            headers: form.dataset.provider === 'formspree' ? { Accept: 'application/json' } : undefined,
+          });
+          if (!response.ok) throw new Error(String(response.status));
+        }
+        const first = String(data.get('name') ?? '').trim().split(/\s+/)[0];
+        const nameSlot = success.querySelector('[data-first-name]');
+        if (nameSlot && first) nameSlot.textContent = first;
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+        success.scrollIntoView({ block: 'center' });
+      } catch {
+        error.textContent = '';
+        error.innerHTML = error.dataset.fallback ?? '';
+        error.hidden = false;
+        button.disabled = false;
+        button.textContent = 'Get my free quote';
+      }
+    });
+
+    // Remember the original error text (it includes the tap-to-call link) for network failures.
+    error.dataset.fallback = error.innerHTML;
+  }
+</script>

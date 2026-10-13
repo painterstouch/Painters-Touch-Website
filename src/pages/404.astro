@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+import { getServices } from '../lib/data';
+import { phoneHref } from '../lib/utils';
+
+const services = await getServices();
+---
+
+<BaseLayout title={`Page not found | ${site.name}`} description="This page could not be found." noindex noBusinessSchema>
+  <section class="section">
+    <div class="wrap">
+      <h1 class="max-w-3xl">This page is not here, but we are.</h1>
+      <p class="lead mt-5">The link may be old or mistyped. Try one of these instead.</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href="/" class="btn btn-primary">Go to the home page</a>
+        <a href="/contact/" class="btn btn-outline">Get a Free Quote</a>
+      </div>
+      <ul class="mt-12 grid max-w-3xl gap-x-10 gap-y-3 sm:grid-cols-2">
+        {
+          services.map((s) => (
+            <li><a href={`/services/${s.id}/`} class="link">{s.data.title}</a></li>
+          ))
+        }
+        <li><a href="/work/" class="link">Our work</a></li>
+        <li><a href="/areas/" class="link">Service areas</a></li>
+        <li><a href="/faq/" class="link">FAQ</a></li>
+        <li><a href={phoneHref()} class="link">Call {site.phone}</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

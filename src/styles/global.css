@@ -1,0 +1,400 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/archivo/wdth.css';
+
+/* ── Design tokens ──────────────────────────────────────────────────────
+   Colors can be changed from src/config/site.ts (brand.*): the layout
+   injects them over these defaults. */
+@theme {
+  --font-sans: 'Archivo Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Black and taupe come from the Painters Touch logo; burgundy is the main color. Change them in src/config/site.ts. */
+  --color-plaster: #f6f4f1; /* page */
+  --color-ink: #171719; /* text, dark bands: the logo's black */
+  --color-ink-soft: #4b4741; /* secondary text */
+  --color-tape: #663347; /* the one accent: burgundy */
+  --color-line: #dcd8d1; /* hairlines */
+  --color-field: #8a8378; /* form borders (3:1 on white) */
+
+  /* Paint chips: decoration only. The first is the logo's taupe. */
+  --color-stoop: #9f9389;
+  --color-brownstone: #8a5a49;
+  --color-hudson: #98a19b;
+  --color-fire-escape: #2b2a2b;
+  --color-park: #a3ad99;
+}
+
+:root {
+  --tape-deep: color-mix(in oklab, var(--color-tape) 78%, black);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    /* Keep a focused or jumped-to element clear of the sticky Call / Quote bar on phones. */
+    scroll-padding-bottom: 5.5rem;
+    -webkit-tap-highlight-color: color-mix(in oklab, var(--color-tape) 16%, transparent);
+  }
+  /* No double-tap-to-zoom delay on tappable things. */
+  a,
+  button,
+  summary,
+  label,
+  select {
+    touch-action: manipulation;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-plaster);
+    color: var(--color-ink);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-stretch: 100%;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Room for the sticky Call / Quote bar that sits at the bottom of phone screens. */
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 1024px) {
+    body {
+      padding-bottom: 0;
+    }
+  }
+
+  /* Headlines: wide and heavy, like NYC signage. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+  h1 {
+    /* Also scales with the screen's height, so a phone held sideways doesn't get a headline that fills the whole view. */
+    font-size: clamp(2.2rem, min(6.6vw, 11vh), 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  h2 {
+    font-size: clamp(1.75rem, 4.2vw, 2.9rem);
+  }
+  h3 {
+    font-size: clamp(1.2rem, 2vw, 1.45rem);
+    font-stretch: 112%;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  h4 {
+    font-size: 1.0625rem;
+    font-stretch: 105%;
+    letter-spacing: -0.01em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-tape);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .band-dark :focus-visible,
+  .band-tape :focus-visible {
+    outline-color: #fff;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-tape) 28%, white);
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .wrap {
+      padding-inline: 2rem;
+    }
+  }
+
+  .section {
+    padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  }
+  .section-tight {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+  /* The first section under a page title sits closer to it. */
+  .page-head + .section {
+    padding-top: clamp(2.25rem, 5vw, 3.75rem);
+  }
+
+  .band-dark {
+    background: var(--color-ink);
+    color: #fff;
+  }
+  .band-tape {
+    background: var(--color-tape);
+    color: #fff;
+  }
+  .band-white {
+    background: #fff;
+  }
+
+  /* Intro paragraph under a page title */
+  .lead {
+    font-size: clamp(1.125rem, 2vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+    max-width: 38rem;
+  }
+  .band-dark .lead {
+    color: rgb(255 255 255 / 0.85);
+  }
+  .band-tape .lead {
+    color: rgb(255 255 255 / 0.94); /* a bit brighter, so it stays easy to read on the taupe */
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.6rem;
+    border: 2px solid transparent;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    font-stretch: 112%;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.15s,
+      color 0.15s,
+      border-color 0.15s,
+      transform 0.15s var(--ease-out);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-primary {
+    background: var(--color-tape);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--tape-deep);
+  }
+  .btn-ink {
+    background: var(--color-ink);
+    color: #fff;
+  }
+  .btn-ink:hover {
+    background: color-mix(in oklab, var(--color-ink) 82%, white);
+  }
+  .btn-light {
+    background: #fff;
+    color: var(--color-ink);
+  }
+  .btn-light:hover {
+    background: #ece8e2;
+  }
+  .btn-outline {
+    border-color: currentColor;
+    color: inherit;
+  }
+  .btn-outline:hover {
+    background: color-mix(in oklab, currentColor 10%, transparent);
+  }
+  .btn-sm {
+    min-height: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.95rem;
+  }
+
+  /* Swipeable rows (reviews, filters) hide their scrollbar; the peeking next item shows there is more. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* A stand-alone text link (not inside a sentence) gets an invisible, thumb-sized tap area around it. */
+  .hit {
+    position: relative;
+  }
+  .hit::after {
+    content: '';
+    position: absolute;
+    inset: -0.85rem -0.5rem;
+  }
+
+  /* ── Text links ── */
+  .link {
+    color: var(--color-tape);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+  }
+  .link:hover {
+    color: var(--tape-deep);
+  }
+  .band-dark .link,
+  .band-tape .link {
+    color: #fff;
+  }
+
+  /* ── Forms ── */
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    background: #fff;
+    border: 1.5px solid var(--color-field);
+    border-radius: 0.25rem;
+    font: inherit;
+    color: var(--color-ink);
+  }
+  textarea.field {
+    min-height: 8rem;
+    resize: vertical;
+  }
+  .field:focus {
+    border-color: var(--color-tape);
+    outline: 3px solid color-mix(in oklab, var(--color-tape) 30%, transparent);
+    outline-offset: 0;
+  }
+  .field-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .field-hint {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.875rem;
+    color: var(--color-ink-soft);
+  }
+
+  /* ── Long-form text (Markdown content) ── */
+  .prose-site {
+    max-width: 40rem;
+    /* A long web address or email in the text wraps instead of pushing the page wider than a small phone. */
+    overflow-wrap: anywhere;
+  }
+  .prose-site > * + * {
+    margin-top: 1.1em;
+  }
+  .prose-site > :first-child {
+    margin-top: 0;
+  }
+  .prose-site h2 {
+    margin-top: 2em;
+    font-size: clamp(1.45rem, 3vw, 1.9rem);
+  }
+  .prose-site h3 {
+    margin-top: 1.7em;
+  }
+  .prose-site ul,
+  .prose-site ol {
+    padding-left: 1.3rem;
+  }
+  .prose-site ul {
+    list-style: disc;
+  }
+  .prose-site ol {
+    list-style: decimal;
+  }
+  .prose-site li + li {
+    margin-top: 0.4em;
+  }
+  .prose-site a {
+    color: var(--color-tape);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  .prose-site strong {
+    font-weight: 700;
+  }
+
+  /* ── Paint-chip motif ── */
+  .chip-bar {
+    display: block;
+    width: 0.9rem;
+    align-self: stretch;
+    border-radius: 2px;
+    background: var(--chip, var(--color-stoop));
+    flex: none;
+  }
+}
+
+/* Phones held sideways: the screen is short, so the header scrolls away with the page and the bottom bar slims down. */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 1023px) {
+  .site-header {
+    position: static;
+  }
+  .mobile-bar {
+    padding-block: 0.25rem;
+  }
+  .mobile-bar .btn {
+    min-height: 2.5rem;
+  }
+  body {
+    padding-bottom: 3.5rem;
+  }
+  [id] {
+    scroll-margin-top: 1rem;
+  }
+  /* The menu list becomes two columns, so all of it fits on a short screen. */
+  #mobile-menu ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2rem;
+  }
+  #mobile-menu a {
+    min-height: 3rem;
+  }
+}
+
+/* The only page-load motion on the site: the hero's paint chips fanning out. */
+@keyframes fan-out {
+  from {
+    transform: rotate(0deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

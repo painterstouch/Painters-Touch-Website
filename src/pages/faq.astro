@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqs } from '../data/faqs';
+import { faqSchema } from '../lib/schema';
+import { pageTitle } from '../lib/utils';
+---
+
+<BaseLayout
+  title={pageTitle('Painting FAQ: Pricing, Prep and Timing')}
+  description="Answers to common questions about interior painting in NYC: flat-rate pricing, prep, how long jobs take, moving furniture, paint brands and insurance."
+  schema={[faqSchema(faqs)]}
+>
+  <PageHeader
+    title="Interior painting questions, answered"
+    lead="Pricing, prep, timing and what to expect. If your question isn’t here, ask us."
+    crumbs={[{ name: 'FAQ', href: '/faq/' }]}
+  />
+
+  <section class="section">
+    <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-9"><FaqList faqs={faqs} /></div>
+    </div>
+  </section>
+
+  <CtaBand heading="Still have a question?" text="Call or send us a message and we’ll get back to you." />
+</BaseLayout>

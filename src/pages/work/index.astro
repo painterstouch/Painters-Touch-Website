@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { site } from '../../config/site';
+import { getProjects } from '../../lib/data';
+import { pageTitle } from '../../lib/utils';
+
+const projects = await getProjects();
+
+// Filter buttons are built from the room types you use in your project files.
+const counts = new Map<string, number>();
+for (const p of projects) counts.set(p.data.roomType, (counts.get(p.data.roomType) ?? 0) + 1);
+const roomTypes = [...counts.keys()].sort((a, b) => a.localeCompare(b));
+
+// At first only the first `initialCount` projects are shown; the rest appear when a category is picked.
+// (Only when there are categories to pick, otherwise nothing could reveal the rest.)
+const limit = site.gallery.initialCount;
+const limited = roomTypes.length > 1 && projects.length > limit;
+---
+
+<BaseLayout
+  title={pageTitle('Interior Painting Projects in NYC')}
+  description="See our interior painting work across NYC, with before and after photos of bedrooms, living rooms, kitchens and commercial spaces."
+>
+  <PageHeader
+    title="Interior painting projects across NYC"
+    lead="Before and after photos from apartments, homes and offices. Tap a project to see the details."
+    crumbs={[{ name: 'Our Work', href: '/work/' }]}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      {
+        roomTypes.length > 1 && (
+          <div hidden data-filter-bar>
+            <h2 class="sr-only">Filter projects by room</h2>
+            {/* Phones: one swipeable row of buttons (fading at the right edge). Larger screens: buttons wrap onto lines. */}
+            <div class="filter-scroll no-scrollbar -mx-5 overflow-x-auto px-5 pb-1 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+              <div class="flex w-max gap-2 pr-10 sm:w-auto sm:flex-wrap sm:pr-0" role="group" aria-label="Filter projects by room">
+                <button type="button" class="filter-btn" data-filter="default" aria-pressed="true">
+                  {limited ? `Featured (${limit})` : `All (${projects.length})`}
+                </button>
+                {roomTypes.map((type) => (
+                  <button type="button" class="filter-btn" data-filter={type} aria-pressed="false">
+                    {type} ({counts.get(type)})
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p id="filter-status" class="sr-only" aria-live="polite"></p>
+          </div>
+        )
+      }
+
+      <ul class="mt-6 grid grid-cols-2 gap-x-3 gap-y-7 sm:mt-8 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3" data-grid data-limit={limited ? limit : 0}>
+        {
+          projects.map((project, i) => (
+            <li data-room={project.data.roomType}>
+              <ProjectCard project={project} eager={i < 3} />
+            </li>
+          ))
+        }
+      </ul>
+      <p id="no-results" class="mt-8 text-ink-soft" hidden>No projects in this category yet.</p>
+      {
+        limited && (
+          <p id="more-note" class="mt-10 max-w-xl text-ink-soft" hidden>
+            These are our featured projects. Choose a category above to see more of our work in that area.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBand heading="Want results like these in your place?" text="Send us your rooms and a few photos. We’ll reply with a flat-rate price." />
+</BaseLayout>
+
+<style>
+  .filter-btn {
+    min-height: 2.75rem;
+    padding: 0.4rem 1rem;
+    border: 1.5px solid var(--color-ink);
+    border-radius: 0.25rem;
+    background: transparent;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  /* On phones the row fades out at the right edge to hint that it scrolls. */
+  @media (max-width: 639px) {
+    .filter-scroll {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.25rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 2.25rem), transparent);
+    }
+  }
+  .filter-btn:hover {
+    background: color-mix(in oklab, var(--color-ink) 8%, transparent);
+  }
+  .filter-btn[aria-pressed='true'] {
+    background: var(--color-ink);
+    color: #fff;
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-filter-bar]');
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  if (bar && grid) {
+    bar.hidden = false; // the filter only appears when JavaScript works
+    const items = [...grid.querySelectorAll<HTMLElement>('[data-room]')];
+    const buttons = [...bar.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const status = document.getElementById('filter-status');
+    const empty = document.getElementById('no-results');
+    const note = document.getElementById('more-note');
+    const limit = Number(grid.dataset.limit ?? 0); // 0 means "show everything at first"
+
+    // "default" = the featured view (the first `limit` projects). Any other value is a category,
+    // which shows every project in it, including ones beyond the first `limit`.
+    const apply = (value: string) => {
+      let shown = 0;
+      items.forEach((item, i) => {
+        const match = value === 'default' ? !limit || i < limit : item.dataset.room === value;
+        item.hidden = !match;
+        if (match) shown++;
+      });
+      for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.filter === value));
+      if (status) {
+        status.textContent =
+          value === 'default'
+            ? `Showing ${shown} ${limit ? 'featured ' : ''}${shown === 1 ? 'project' : 'projects'}`
+            : `Showing ${shown} ${shown === 1 ? 'project' : 'projects'} in ${value}`;
+      }
+      if (empty) empty.hidden = shown > 0;
+      if (note) note.hidden = !(value === 'default' && limit > 0);
+    };
+    buttons.forEach((b) =>
+      b.addEventListener('click', () => {
+        apply(b.dataset.filter ?? 'default');
+        // On phones the buttons scroll sideways: keep the chosen one in view.
+        b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      }),
+    );
+    apply('default'); // trim the list to the featured projects (without JavaScript, everything stays visible)
+  }
+</script>

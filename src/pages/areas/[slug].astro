@@ -1,0 +1,152 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import FaqList from '../../components/FaqList.astro';
+import MapEmbed from '../../components/MapEmbed.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../config/site';
+import { chipAt, getAreas, getProjects, getServices } from '../../lib/data';
+import { faqSchema } from '../../lib/schema';
+import { pageTitle, phoneHref } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const areas = await getAreas();
+  return areas.map((area) => ({ params: { slug: area.id }, props: { area } }));
+}
+
+const { area } = Astro.props;
+const { data } = area;
+const { Content } = await render(area);
+
+const [allServices, allAreas, allProjects] = await Promise.all([getServices(), getAreas(), getProjects()]);
+const services = data.services.map((id) => allServices.find((s) => s.id === id)).filter((s) => s !== undefined);
+const projects = allProjects.filter((p) => p.data.area === area.id).slice(0, 3);
+// Link to other areas in the same region (internal linking).
+const neighbors = allAreas.filter((a) => a.id !== area.id && a.data.region === data.region);
+
+const heading = `Interior painters in ${data.name}, ${data.region}`;
+const schema: object[] = data.faqs.length ? [faqSchema(data.faqs)] : [];
+---
+
+<BaseLayout
+  title={data.metaTitle ? pageTitle(data.metaTitle) : pageTitle(`Interior Painters in ${data.name}, ${data.region}`)}
+  description={data.metaDescription}
+  {schema}
+>
+  <PageHeader
+    title={heading}
+    lead={data.lead}
+    crumbs={[
+      { name: 'Service Areas', href: '/areas/' },
+      { name: data.name, href: `/areas/${area.id}/` },
+    ]}
+  >
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a href="/contact/" class="btn btn-primary">Get a Free Quote in {data.name}</a>
+      <a href={phoneHref()} class="btn btn-outline">
+        <Icon name="phone" size={20} />
+        Call Now
+        <span class="sr-only">{site.phone}</span>
+      </a>
+    </div>
+  </PageHeader>
+
+  <section class="section">
+    <div class="wrap grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="prose-site lg:col-span-7">
+        <Content />
+      </div>
+      <div class="lg:col-span-5">
+        <h2 class="text-2xl">What’s different about painting in {data.name}</h2>
+        <ul class="mt-6 space-y-6">
+          {
+            data.highlights.map((h, i) => (
+              <li class="flex gap-4" style={`--chip:${chipAt(i).hex}`}>
+                <span class="chip-bar" aria-hidden="true" />
+                <div>
+                  <h3 class="text-lg">{h.title}</h3>
+                  <p class="mt-1 text-ink-soft">{h.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-white section" aria-labelledby="services-heading">
+    <div class="wrap">
+      <h2 id="services-heading" class="max-w-2xl">Services we offer in {data.name}</h2>
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          services.map((s) => (
+            <li class="border-t border-line pt-5">
+              <h3 class="text-xl">
+                <a href={`/services/${s.id}/`} class="no-underline hover:underline decoration-2 underline-offset-4">{s.data.title}</a>
+              </h3>
+              <p class="mt-2 text-ink-soft">{s.data.summary}</p>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        data.nearby.length > 0 && (
+          <p class="mt-10 max-w-2xl">
+            <strong>Also serving nearby:</strong> {data.nearby.join(', ')}.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    projects.length > 0 && (
+      <section class="section" aria-labelledby="projects-heading">
+        <div class="wrap">
+          <h2 id="projects-heading" class="max-w-2xl">Recent work in {data.name}</h2>
+          <ul class="mt-8 grid grid-cols-2 gap-x-3 gap-y-7 sm:mt-10 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3">
+            {projects.map((project) => <li><ProjectCard project={project} /></li>)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    data.faqs.length > 0 && (
+      <section class:list={['section', projects.length === 0 ? '' : 'band-white']} aria-labelledby="faq-heading">
+        <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <h2 id="faq-heading" class="lg:col-span-4">Painting in {data.name}: common questions</h2>
+          <div class="lg:col-span-8"><FaqList faqs={data.faqs} /></div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="map-heading">
+    <div class="wrap">
+      <h2 id="map-heading" class="max-w-xl">Our service area around {data.name}</h2>
+      <MapEmbed query={data.mapQuery ?? `${data.name}, ${data.region}, NY`} title={`Map of ${data.name}`} class="mt-8" />
+      {
+        neighbors.length > 0 && (
+          <p class="mt-8">
+            <strong>Other {data.region} areas:</strong>{' '}
+            {neighbors.map((n, i) => (
+              <>
+                <a href={`/areas/${n.id}/`} class="link">{n.data.name}</a>
+                {i < neighbors.length - 1 ? ', ' : ''}
+              </>
+            ))}
+            . <a href="/areas/" class="link">View all service areas</a>.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBand heading={`Painting in ${data.name}? Get a flat-rate price.`} />
+</BaseLayout>

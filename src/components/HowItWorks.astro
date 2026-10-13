@@ -1,0 +1,40 @@
+---
+import { site } from '../config/site';
+
+const steps = [
+  {
+    title: 'Request your quote',
+    text: `Tell us which rooms need painting. Photos help, but are optional. We reply within ${site.replyTime}.`,
+  },
+  {
+    title: 'Get a flat-rate price',
+    text: 'You get one written price for the whole job, covering prep, paint and cleanup. No hourly billing, no surprises.',
+  },
+  {
+    title: 'We paint, you relax',
+    text: 'We show up on time, protect your furniture and floors, paint, and clean up before we leave.',
+  },
+];
+---
+
+<section class="section" aria-labelledby="how-heading">
+  <div class="wrap">
+    <h2 id="how-heading" class="max-w-xl">From first call to finished walls in three steps</h2>
+    <ol class="mt-8 grid gap-7 md:mt-12 md:grid-cols-3 md:gap-8">
+      {
+        steps.map((step, i) => (
+          // Phones: the big number sits beside the text, so each step takes less height.
+          <li class="grid grid-cols-[2.5rem_1fr] gap-x-4 border-t-[6px] border-tape pt-5 md:block md:pt-6">
+            <span class="row-span-2 text-4xl leading-none font-extrabold text-tape md:block md:text-5xl" style="font-stretch:125%" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3 class="text-xl md:mt-4">
+              <span class="sr-only">Step {i + 1}: </span>{step.title}
+            </h3>
+            <p class="mt-2 max-w-sm text-ink-soft md:mt-3">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

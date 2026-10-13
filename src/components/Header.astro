@@ -1,0 +1,115 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { phoneHref } from '../lib/utils';
+
+const nav = [
+  { href: '/services/', label: 'Services' },
+  { href: '/work/', label: 'Our Work' },
+  { href: '/reviews/', label: 'Reviews' },
+  { href: '/areas/', label: 'Service Areas' },
+  { href: '/about/', label: 'About' },
+  { href: '/faq/', label: 'FAQ' },
+];
+const current = Astro.url.pathname;
+const isCurrent = (href: string) => current.startsWith(href);
+---
+
+<header class="site-header sticky top-0 z-40 border-b border-line bg-plaster">
+  <div class="wrap flex h-[4.25rem] items-center justify-between gap-4">
+    <a href="/" class="rounded-sm no-underline" aria-label={`${site.name}, home`}>
+      <Logo />
+    </a>
+
+    <nav aria-label="Main" class="hidden items-center gap-6 lg:flex xl:gap-7">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+            class:list={[
+              'py-2 text-[0.95rem] font-semibold no-underline decoration-2 underline-offset-[0.45em] hover:underline',
+              isCurrent(item.href) ? 'underline decoration-tape' : 'decoration-ink/40',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a href={phoneHref()} class="hidden items-center gap-2 py-2 text-[0.95rem] font-bold no-underline hover:underline xl:inline-flex">
+        <Icon name="phone" size={18} />
+        {site.phone}
+      </a>
+      <a href="/contact/" class="btn btn-primary btn-sm">Free Quote</a>
+    </nav>
+
+    <button
+      type="button"
+      id="menu-toggle"
+      class="inline-flex h-12 w-12 items-center justify-center rounded-sm lg:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span class="sr-only">Menu</span>
+      <Icon name="menu" size={26} class="menu-open" />
+      <Icon name="close" size={26} class="menu-close hidden" />
+    </button>
+  </div>
+
+  <div id="mobile-menu" hidden class="max-h-[calc(100dvh-4.25rem)] overflow-y-auto overscroll-contain border-t border-line bg-plaster lg:hidden">
+    <nav aria-label="Mobile" class="wrap py-3">
+      <ul>
+        {
+          nav.map((item) => (
+            <li class="border-b border-line">
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+                class:list={[
+                  'flex min-h-14 items-center text-lg font-bold no-underline',
+                  isCurrent(item.href) && 'text-tape',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+        <li class="border-b border-line">
+          <a href="/contact/" class="flex min-h-14 items-center text-lg font-bold no-underline">Contact</a>
+        </li>
+        <li>
+          <a href={phoneHref()} class="flex min-h-14 items-center gap-3 text-lg font-extrabold text-tape no-underline">
+            <Icon name="phone" size={22} />
+            {site.phone}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle') as HTMLButtonElement | null;
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    const set = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      toggle.querySelector('.menu-open')?.classList.toggle('hidden', open);
+      toggle.querySelector('.menu-close')?.classList.toggle('hidden', !open);
+    };
+    toggle.addEventListener('click', () => set(Boolean(menu.hidden)));
+    // Tapping anywhere outside the menu closes it.
+    document.addEventListener('click', (e) => {
+      if (!menu.hidden && e.target instanceof Node && !menu.contains(e.target) && !toggle.contains(e.target)) set(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        set(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

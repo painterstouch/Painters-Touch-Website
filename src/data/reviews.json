@@ -1,0 +1,21 @@
+[
+  {
+    "id": "review-jonny-b",
+    "name": "Jonny B.",
+    "rating": 5,
+    "text": "My home was in need of a new paint job badly. Ivan and his team came in and did an amazing job. Their attention to detail was amazing. They were very efficient and clean. I would definitely recommend them to my friends."
+  },
+  {
+    "id": "review-elena-f",
+    "name": "Elena F.",
+    "rating": 5,
+    "featured": true,
+    "text": "I used Painters Touch for my entire apartment. I would never use anyone else. From the first consultation with Ivan, he explained the entire process and time frame. I had popcorn ceilings throughout and Jose and his team were able to skim coat and the result was unbelievable, so beautiful. Ivan even had a camera which could take pictures of an item and recommend a color to coordinate. Jose’s team were excellent and professional and friendly. I was kept informed of the progress because I was staying elsewhere during the project. Ivan was always available for any question I may have had during the project. I can highly recommend Painters Touch for your painting needs. You won’t be disappointed."
+  },
+  {
+    "id": "review-brad-w",
+    "name": "Brad W.",
+    "rating": 5,
+    "text": "Ivan and his team painted my whole apt. I would highly recommend them. This company is very professional, they do the job on a timely basis, the work is impeccable and they are very careful not to damage floors or anything in your apt. I am very happy to have hired them. You will not regret using them to work on your house or apt."
+  }
+]

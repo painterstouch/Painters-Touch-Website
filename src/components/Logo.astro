@@ -1,0 +1,61 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import sharp from 'sharp';
+import { site } from '../config/site';
+
+interface Props {
+  /** Use the light version (for dark backgrounds). */
+  light?: boolean;
+  class?: string;
+}
+const { light = false, class: className = '' } = Astro.props;
+
+// Logo files live in /public. public/logo.png is used automatically; public/logo-light.png is used on dark backgrounds.
+const onDisk = (file: string) => fs.existsSync(path.join(process.cwd(), 'public', file));
+const hasLogoFile = onDisk(site.logoImage);
+const lightFile = site.logoImageLight && onDisk(site.logoImageLight) ? site.logoImageLight : null;
+const src = light && lightFile ? lightFile : site.logoImage;
+
+// Width and height attributes stop the page from jumping while the logo loads.
+const DISPLAY_HEIGHT = 48;
+let displayWidth = 0;
+if (hasLogoFile) {
+  const meta = await sharp(path.join(process.cwd(), 'public', src)).metadata();
+  displayWidth = Math.round((DISPLAY_HEIGHT * (meta.width ?? 1)) / (meta.height ?? 1));
+}
+// Without a light version, a dark-text logo sits on a white plate so it stays readable.
+const needsPlate = light && hasLogoFile && !lightFile;
+---
+
+<span class:list={['inline-flex items-center gap-2.5', className]}>
+  {
+    hasLogoFile ? (
+      <span class:list={[needsPlate && 'rounded-sm bg-white px-3 py-2']}>
+        <img
+          src={src}
+          alt={site.name}
+          width={displayWidth}
+          height={DISPLAY_HEIGHT}
+          class="block h-11 w-auto sm:h-12"
+          loading={light ? 'lazy' : 'eager'}
+          decoding="async"
+        />
+      </span>
+    ) : (
+      <>
+        <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true" focusable="false" class="flex-none">
+          <rect width="40" height="40" rx="7" fill={light ? '#fff' : 'var(--color-ink)'} />
+          <rect x="8" y="10" width="24" height="9" rx="2" fill="var(--color-tape)" />
+          <rect x="8" y="22" width="15" height="9" rx="2" fill={light ? 'var(--color-ink)' : '#fff'} />
+        </svg>
+        <span
+          class:list={['text-[1.1rem] leading-none font-extrabold tracking-[-0.03em]', light ? 'text-white' : 'text-ink']}
+          style="font-stretch:118%"
+        >
+          {site.name}
+        </span>
+      </>
+    )
+  }
+</span>

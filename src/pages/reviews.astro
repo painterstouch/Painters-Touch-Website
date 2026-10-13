@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import Stars from '../components/Stars.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+import { getReviews, reviewStats } from '../lib/data';
+import { pageTitle } from '../lib/utils';
+
+const reviews = await getReviews();
+const stats = reviewStats(reviews);
+---
+
+<BaseLayout
+  title={pageTitle('Customer Reviews')}
+  description={`Read what customers say about our interior painting in NYC. Real reviews from homeowners, renters and business owners in Queens, Brooklyn and Manhattan.`}
+>
+  <PageHeader
+    title="Customer reviews"
+    lead="What homeowners, renters and business owners say after we finish the job."
+    crumbs={[{ name: 'Reviews', href: '/reviews/' }]}
+  >
+    {
+      stats && (
+        <p class="mt-6 flex items-center gap-3 font-bold">
+          <Stars rating={stats.average} size={24} />
+          <span>{stats.average.toFixed(1)} out of 5 from {stats.count} {stats.count === 1 ? 'review' : 'reviews'}</span>
+        </p>
+      )
+    }
+    <a href={site.social.googleReview} target="_blank" rel="noopener" class="btn btn-ink mt-8">
+      <Icon name="star" size={18} />
+      Leave a review on Google
+    </a>
+  </PageHeader>
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="sr-only">All reviews</h2>
+      {/* Columns (not a grid) so short and long reviews sit snugly without empty gaps. */}
+      <ul class="columns-1 gap-5 md:columns-2 lg:columns-3 [&>li]:mb-5 [&>li]:break-inside-avoid">
+        {reviews.map((review) => <li id={review.id}><ReviewCard review={review} /></li>)}
+      </ul>
+      <p class="mt-10 max-w-xl text-ink-soft">
+        Had a good experience? A short Google review helps neighbors find us, and we read every one.
+        <a href={site.social.googleReview} target="_blank" rel="noopener" class="link">Leave a review on Google</a>.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

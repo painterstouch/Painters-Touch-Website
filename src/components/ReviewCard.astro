@@ -1,0 +1,27 @@
+---
+import Stars from './Stars.astro';
+import type { Review } from '../lib/data';
+import { formatReviewDate } from '../lib/utils';
+
+interface Props {
+  review: Review;
+  /** Short version for the home page: long reviews are trimmed and link to the full text on /reviews/. */
+  preview?: boolean;
+}
+const { review, preview = false } = Astro.props;
+const { name, neighborhood, rating, date, text } = review.data;
+const when = formatReviewDate(date);
+const trimmed = preview && text.length > 280;
+---
+
+<figure class="flex h-full flex-col border border-line bg-white p-6 sm:p-7">
+  <Stars rating={rating} />
+  <blockquote class="mt-4 flex-1 text-[1.05rem] leading-relaxed">
+    <p class:list={[trimmed && 'line-clamp-8']}>{text}</p>
+    {trimmed && <a href={`/reviews/#${review.id}`} class="link hit mt-3 inline-block text-sm">Read the full review</a>}
+  </blockquote>
+  <figcaption class="mt-5 border-t border-line pt-4 text-sm">
+    <span class="block font-bold">{name}{neighborhood ? `, ${neighborhood}` : ''}</span>
+    {when && <span class="text-ink-soft">{when}</span>}
+  </figcaption>
+</figure>

@@ -1,0 +1,224 @@
+---
+import Icon from './Icon.astro';
+---
+
+{
+  /*
+    Photo viewer. Any link on the page with the attribute `data-lightbox` opens here:
+    <a href="/full-size.jpg" data-lightbox data-caption="Describe the photo"> <img ...> </a>
+    Without JavaScript the link simply opens the full-size image.
+  */
+}
+<dialog id="lightbox" class="lb" aria-label="Photo viewer">
+  <button type="button" class="lb-btn lb-close" data-lb-close aria-label="Close photo viewer">
+    <Icon name="close" size={24} />
+  </button>
+  <p class="lb-count" data-lb-count aria-hidden="true"></p>
+  <button type="button" class="lb-btn lb-prev" data-lb-prev aria-label="Previous photo">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"></polyline></svg>
+  </button>
+  <figure class="lb-figure">
+    <img alt="" class="lb-img" />
+    <figcaption class="lb-caption" aria-live="polite"></figcaption>
+  </figure>
+  <button type="button" class="lb-btn lb-next" data-lb-next aria-label="Next photo">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>
+  </button>
+</dialog>
+
+<style>
+  .lb {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+  }
+  .lb:not([open]) {
+    display: none;
+  }
+  .lb[open] {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 4rem 0.75rem 1rem;
+  }
+  .lb::backdrop {
+    background: rgb(14 14 15 / 0.985);
+  }
+  .lb-figure {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    /* Sideways swipes belong to the viewer (next / previous photo); up-down scrolling and pinch-zoom still work. */
+    touch-action: pan-y pinch-zoom;
+  }
+  .lb-count {
+    position: absolute;
+    top: 1.35rem;
+    left: 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.9);
+  }
+  .lb-img {
+    max-width: 100%;
+    max-height: calc(100dvh - 9rem);
+    object-fit: contain;
+    border-radius: 2px;
+  }
+  .lb-caption {
+    max-width: 40rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: rgb(255 255 255 / 0.9);
+  }
+  .lb-btn {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+  .lb-btn:hover {
+    background: rgb(255 255 255 / 0.28);
+  }
+  .lb-btn:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+  .lb-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  @media (max-width: 640px) {
+    .lb[open] {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto;
+      align-content: center;
+      padding: 4rem 0.5rem 5rem;
+    }
+    .lb-img {
+      max-height: calc(100dvh - 12rem);
+    }
+    /* Long photo descriptions would crowd the photo on a phone: show the first lines only. */
+    .lb-caption {
+      font-size: 0.875rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .lb-prev,
+    .lb-next {
+      position: absolute;
+      bottom: 1rem;
+    }
+    .lb-prev {
+      left: 1rem;
+    }
+    .lb-next {
+      right: 1rem;
+    }
+  }
+</style>
+
+<script>
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+  const allLinks = [...document.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]')];
+  // The main photo and its thumbnail point at the same image, so each photo is only listed once in the viewer.
+  const indexByHref = new Map<string, number>();
+  const links: HTMLAnchorElement[] = [];
+  for (const link of allLinks) {
+    if (!indexByHref.has(link.href)) {
+      indexByHref.set(link.href, links.length);
+      links.push(link);
+    }
+  }
+
+  if (dialog && links.length) {
+    const img = dialog.querySelector<HTMLImageElement>('.lb-img')!;
+    const caption = dialog.querySelector<HTMLElement>('.lb-caption')!;
+    const prev = dialog.querySelector<HTMLElement>('[data-lb-prev]')!;
+    const next = dialog.querySelector<HTMLElement>('[data-lb-next]')!;
+    const count = dialog.querySelector<HTMLElement>('[data-lb-count]')!;
+    let index = 0;
+
+    const show = (i: number) => {
+      index = (i + links.length) % links.length;
+      const link = links[index];
+      img.src = link.href;
+      img.alt = link.dataset.alt ?? link.dataset.caption ?? '';
+      caption.textContent = link.dataset.caption ?? '';
+      count.textContent = links.length > 1 ? `${index + 1} / ${links.length}` : '';
+    };
+
+    allLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        show(indexByHref.get(link.href) ?? 0);
+        dialog.showModal();
+        document.documentElement.style.overflow = 'hidden';
+      });
+    });
+
+    const multiple = links.length > 1;
+    prev.hidden = next.hidden = !multiple;
+    prev.addEventListener('click', () => show(index - 1));
+    next.addEventListener('click', () => show(index + 1));
+    dialog.querySelector('[data-lb-close]')!.addEventListener('click', () => dialog.close());
+    // Click on the dark backdrop closes the viewer.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = '';
+      img.removeAttribute('src');
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (!multiple) return;
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+
+    // Swipe left / right on a phone to move between photos (ignored while the visitor is pinch-zoomed in).
+    let startX = 0;
+    let startY = 0;
+    let swiping = false;
+    dialog.addEventListener(
+      'touchstart',
+      (e) => {
+        swiping = multiple && e.touches.length === 1 && (window.visualViewport?.scale ?? 1) < 1.05;
+        if (swiping) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }
+      },
+      { passive: true },
+    );
+    dialog.addEventListener(
+      'touchend',
+      (e) => {
+        if (!swiping) return;
+        swiping = false;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) show(index + (dx < 0 ? 1 : -1));
+      },
+      { passive: true },
+    );
+  }
+</script>

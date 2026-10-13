@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+import { chipAt, type Service } from '../lib/data';
+
+interface Props {
+  services: Service[];
+  /** How many "what's included" items to preview per service. */
+  preview?: number;
+}
+const { services, preview = 4 } = Astro.props;
+---
+
+<ul>
+  {
+    services.map((service, i) => (
+      <li class="grid gap-4 border-t border-line py-6 md:grid-cols-12 md:gap-8 md:py-10">
+        <div class="flex gap-4 md:col-span-5" style={`--chip:${chipAt(i).hex}`}>
+          <span class="chip-bar" aria-hidden="true" />
+          <div>
+            <h3 class="text-xl sm:text-2xl">
+              <a href={`/services/${service.id}/`} class="no-underline hover:underline decoration-2 underline-offset-4">
+                {service.data.title}
+              </a>
+            </h3>
+            <p class="mt-2 max-w-sm text-ink-soft">{service.data.summary}</p>
+          </div>
+        </div>
+        {/* The checklist is left out on phones to keep the page short; every service page has the full list. */}
+        <ul class="hidden space-y-2 md:col-span-5 md:block">
+          {service.data.includes.slice(0, preview).map((item) => (
+            <li class="flex gap-2.5">
+              <Icon name="check" size={18} class="mt-[0.3rem] flex-none text-tape" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+        <div class="pl-[calc(0.9rem+1rem)] md:col-span-2 md:pl-0 md:text-right">
+          <a href={`/services/${service.id}/`} class="link hit inline-block">
+            Learn more<span class="sr-only"> about {service.data.title}</span>
+          </a>
+        </div>
+      </li>
+    ))
+  }
+</ul>

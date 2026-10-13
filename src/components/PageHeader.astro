@@ -1,0 +1,21 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  lead?: string;
+  /** Trail after "Home". Leave empty for no breadcrumbs. */
+  crumbs?: { name: string; href: string }[];
+  class?: string;
+}
+const { title, lead, crumbs = [], class: className = '' } = Astro.props;
+---
+
+<header class:list={['page-head border-b border-line pt-6 pb-8 sm:pt-10 sm:pb-12', className]}>
+  <div class="wrap">
+    {crumbs.length > 0 && <Breadcrumbs items={crumbs} />}
+    <h1 class:list={['max-w-4xl', crumbs.length > 0 && 'mt-4 sm:mt-6']}>{title}</h1>
+    {lead && <p class="lead mt-4 sm:mt-5">{lead}</p>}
+    <slot />
+  </div>
+</header>

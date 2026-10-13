@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { phoneHref } from '../lib/utils';
+
+interface Props {
+  heading?: string;
+  text?: string;
+  /** Pre-select a project type on the quote form (service slug). */
+  service?: string;
+}
+const {
+  heading = 'Tell us about your rooms. We’ll send a flat-rate price.',
+  text = `Free quote, no obligation. We reply within ${site.replyTime}.`,
+  service,
+} = Astro.props;
+const quoteHref = service ? `/contact/?service=${service}` : '/contact/';
+---
+
+<section class="band-tape section" aria-labelledby="cta-heading">
+  <div class="wrap">
+    <h2 id="cta-heading" class="max-w-3xl">{heading}</h2>
+    <p class="lead mt-5">{text}</p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a href={quoteHref} class="btn btn-light">Get a Free Quote</a>
+      <a href={phoneHref()} class="btn btn-outline">
+        <Icon name="phone" size={20} />
+        Call {site.phone}
+      </a>
+    </div>
+  </div>
+</section>
