@@ -308,6 +308,7 @@ The site deploys to Vercel too (**Add New → Project → import your GitHub rep
 | A photo doesn't appear | The file name in `index.md` must match the file in the folder exactly, including `.jpg`. iPhone photos in HEIC format need converting to JPG first. |
 | The area page won't build | Check `region` matches `regions` in `site.ts`, and that every slug under `services` is the file name of a service. |
 | Changes don't show on the live site | Wait for the Netlify deploy to finish (**Deploys** tab). If you use drag and drop, build and upload again. |
+| The quote form says "Your request is in" but no email or submission arrives | **The site must be served by Netlify.** If your domain's DNS points to another host (for example Hostinger), that host answers every form with a thank-you page and the quote is thrown away. Check the address bar: the live site must be served by Netlify, and the domain must be added under **Domain management** in Netlify, with the DNS records Netlify shows. Test it: a form post with a made-up form name must come back as an error (404), not as a thank-you page. Also check **Forms → quote** in Netlify, including the Spam tab, and that a notification email exists under **Forms → Submission notifications**. |
 | `npm` is "not recognized" | Close and reopen the terminal after installing Node.js, or reinstall Node. |
 
 ---
