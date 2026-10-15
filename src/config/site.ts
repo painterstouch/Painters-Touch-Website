@@ -95,7 +95,7 @@ export const site = {
     /** Set to true ONLY if you carry liability insurance. Until then "Fully insured" stays hidden. */
     insured: false,
     /** Brands you actually use, for the FAQ. Example: 'Benjamin Moore and Sherwin-Williams'. Leave '' to leave brand names out. */
-    paintBrands: '',
+    paintBrands: 'Sherwin-Williams and Benjamin Moore',
   },
 
   /** How quickly you promise to answer quote requests (shown after the form is sent). */
