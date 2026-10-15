@@ -121,3 +121,26 @@ export function websiteSchema() {
     publisher: { '@id': BUSINESS_ID },
   };
 }
+
+export function blogPostingSchema(post: {
+  url: string;
+  title: string;
+  description: string;
+  image: string;
+  datePublished: Date;
+  dateModified?: Date;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    image: absoluteUrl(post.image),
+    url: absoluteUrl(post.url),
+    mainEntityOfPage: absoluteUrl(post.url),
+    datePublished: post.datePublished.toISOString(),
+    dateModified: (post.dateModified ?? post.datePublished).toISOString(),
+    author: { '@id': BUSINESS_ID },
+    publisher: { '@id': BUSINESS_ID },
+  };
+}

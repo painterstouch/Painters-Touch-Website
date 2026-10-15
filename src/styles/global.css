@@ -343,6 +343,51 @@
     font-weight: 700;
   }
 
+  /* ── Blog posts: photos, captions and tables inside the article text ── */
+  .prose-post img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 34rem;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .prose-post p:has(> img) {
+    margin-top: 2em;
+  }
+  /* A line in *italics* right under a photo is its caption. */
+  .prose-post p:has(> img) + p:has(> em:only-child) {
+    margin-top: 0.6em;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+  /* Grid children can't shrink below their content by default; this stops a wide table stretching the page. */
+  .prose-post {
+    min-width: 0;
+  }
+  /* On narrow screens a wide table scrolls sideways on its own instead of widening the page. */
+  .prose-post table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .prose-post th:first-child,
+  .prose-post td:first-child {
+    min-width: 7.5rem;
+  }
+  .prose-post th,
+  .prose-post td {
+    border-bottom: 1px solid var(--color-line);
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose-post th {
+    font-weight: 700;
+  }
+
   /* ── Paint-chip motif ── */
   .chip-bar {
     display: block;

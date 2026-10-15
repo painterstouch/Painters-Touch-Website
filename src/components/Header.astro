@@ -4,12 +4,14 @@ import Icon from './Icon.astro';
 import { site } from '../config/site';
 import { phoneHref } from '../lib/utils';
 
-const nav = [
+const nav: { href: string; label: string; mobileOnly?: boolean }[] = [
   { href: '/services/', label: 'Services' },
   { href: '/work/', label: 'Our Work' },
   { href: '/reviews/', label: 'Reviews' },
   { href: '/areas/', label: 'Service Areas' },
   { href: '/about/', label: 'About' },
+  // Phone menu only: the desktop bar is full. The footer links to the blog on every screen size.
+  { href: '/blog/', label: 'Blog', mobileOnly: true },
   { href: '/faq/', label: 'FAQ' },
 ];
 const current = Astro.url.pathname;
@@ -24,7 +26,7 @@ const isCurrent = (href: string) => current.startsWith(href);
 
     <nav aria-label="Main" class="hidden items-center gap-6 lg:flex xl:gap-7">
       {
-        nav.map((item) => (
+        nav.filter((item) => !item.mobileOnly).map((item) => (
           <a
             href={item.href}
             aria-current={isCurrent(item.href) ? 'page' : undefined}

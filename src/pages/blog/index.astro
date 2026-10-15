@@ -1,0 +1,53 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getPosts } from '../../lib/data';
+import { pageTitle } from '../../lib/utils';
+
+const posts = await getPosts();
+const dateFmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<BaseLayout
+  title={pageTitle('Painting Tips and Ideas Blog')}
+  description="Painting ideas, color advice and how-to guides from NYC interior painters: accent walls, finishes, prep and what to expect from a paint job."
+>
+  <PageHeader
+    title="Painting tips and ideas"
+    lead="Color advice, how-to guides and what we have learned from painting homes across NYC and Long Island."
+    crumbs={[{ name: 'Blog', href: '/blog/' }]}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="sr-only">All posts</h2>
+      <ul class="grid gap-x-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+        {
+          posts.map((post, i) => (
+            <li>
+              <a href={`/blog/${post.id}/`} class="group block no-underline">
+                <Picture
+                  src={post.data.hero}
+                  alt={post.data.heroAlt}
+                  formats={['avif', 'webp']}
+                  fallbackFormat="webp"
+                  widths={[480, 720, 960]}
+                  sizes="(min-width: 1024px) 352px, (min-width: 768px) 50vw, 100vw"
+                  class="aspect-[16/10] w-full rounded-[2px] object-cover"
+                  loading={i < 3 ? 'eager' : 'lazy'}
+                />
+                <p class="mt-4 text-sm text-ink-soft">{dateFmt(post.data.date)}</p>
+                <h3 class="mt-1 text-xl group-hover:underline decoration-2 underline-offset-4">{post.data.title}</h3>
+                <p class="mt-2 text-ink-soft">{post.data.excerpt}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

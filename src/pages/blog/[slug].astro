@@ -1,0 +1,143 @@
+---
+import { render } from 'astro:content';
+import { Picture, getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { site } from '../../config/site';
+import { getPosts, getServices } from '../../lib/data';
+import { blogPostingSchema, faqSchema } from '../../lib/schema';
+import { pageTitle } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+
+const [services, allPosts] = await Promise.all([getServices(), getPosts()]);
+const service = services.find((s) => s.id === data.service);
+const morePosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
+
+const url = `/blog/${post.id}/`;
+// A 1200 x 630 JPEG of the main photo for link previews (Facebook, iMessage, Google).
+const og = await getImage({ src: data.hero, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
+const dateFmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+const schema: object[] = [
+  blogPostingSchema({
+    url,
+    title: data.title,
+    description: data.metaDescription,
+    image: og.src,
+    datePublished: data.date,
+    dateModified: data.updated,
+  }),
+];
+if (data.faqs.length) schema.push(faqSchema(data.faqs));
+---
+
+<BaseLayout title={pageTitle(data.metaTitle)} description={data.metaDescription} ogType="article" ogImage={og.src} {schema}>
+  <article>
+    <header class="page-head border-b border-line pt-6 pb-8 sm:pt-10 sm:pb-12">
+      <div class="wrap">
+        <Breadcrumbs
+          items={[
+            { name: 'Blog', href: '/blog/' },
+            { name: data.title, href: url },
+          ]}
+        />
+        <h1 class="mt-4 max-w-4xl sm:mt-6">{data.title}</h1>
+        <p class="lead mt-4 sm:mt-5">{data.excerpt}</p>
+        <p class="mt-5 text-sm text-ink-soft">
+          By the {site.name} team ·{' '}
+          <time datetime={iso(data.date)}>{dateFmt(data.date)}</time>
+          {
+            data.updated && (
+              <>
+                {' '}· Updated <time datetime={iso(data.updated)}>{dateFmt(data.updated)}</time>
+              </>
+            )
+          }
+        </p>
+      </div>
+    </header>
+
+    <div class="wrap pt-8 sm:pt-10">
+      <figure class="max-w-5xl">
+        <Picture
+          src={data.hero}
+          alt={data.heroAlt}
+          formats={['avif', 'webp']}
+          fallbackFormat="webp"
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 1100px) 1024px, 100vw"
+          class="aspect-[16/10] w-full rounded-[2px] object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+        {data.heroCredit && <figcaption class="mt-2 text-sm text-ink-soft">{data.heroCredit}</figcaption>}
+      </figure>
+    </div>
+
+    <section class="section pt-10 sm:pt-12">
+      <div class="wrap grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="prose-site prose-post lg:col-span-8">
+          <Content />
+        </div>
+        {
+          service && (
+            <aside class="lg:col-span-4">
+              <div class="border border-line bg-white p-6 sm:p-8 lg:sticky lg:top-28">
+                <h2 class="text-2xl">Want it done for you?</h2>
+                <p class="mt-3 text-ink-soft">{service.data.summary}</p>
+                <a href={`/contact/?service=${service.id}`} class="btn btn-primary mt-6 w-full">Get a Free Quote</a>
+                <p class="mt-4">
+                  <a href={`/services/${service.id}/`} class="link">About our {service.data.shortTitle.toLowerCase()} service</a>
+                </p>
+              </div>
+            </aside>
+          )
+        }
+      </div>
+    </section>
+  </article>
+
+  {
+    data.faqs.length > 0 && (
+      <section class="band-white section" aria-labelledby="faq-heading">
+        <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <h2 id="faq-heading" class="lg:col-span-4">Common questions</h2>
+          <div class="lg:col-span-8"><FaqList faqs={data.faqs} /></div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    morePosts.length > 0 && (
+      <section class="section" aria-labelledby="more-heading">
+        <div class="wrap">
+          <h2 id="more-heading" class="text-2xl">More from the blog</h2>
+          <ul class="mt-6 grid gap-6 md:grid-cols-3">
+            {morePosts.map((p) => (
+              <li class="border-t border-line pt-4">
+                <h3 class="text-lg">
+                  <a href={`/blog/${p.id}/`} class="no-underline hover:underline decoration-2 underline-offset-4">{p.data.title}</a>
+                </h3>
+                <p class="mt-1 text-ink-soft">{p.data.excerpt}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand service={data.service} />
+</BaseLayout>

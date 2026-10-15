@@ -7,6 +7,7 @@ export type Area = CollectionEntry<'areas'>;
 export type Project = CollectionEntry<'projects'>;
 export type Review = CollectionEntry<'reviews'>;
 export type Region = CollectionEntry<'regions'>;
+export type Post = CollectionEntry<'blog'>;
 
 /** The paint chips used across the site (names are just for fun, not real paint colors). */
 export const chips = [
@@ -47,6 +48,12 @@ export async function getRegions(): Promise<Region[]> {
 /** The region page that covers a region name from site.ts (e.g. "Nassau County" → Long Island), if any. */
 export function regionPageFor(regions: Region[], regionName: string): Region | undefined {
   return regions.find((r) => r.data.covers.includes(regionName));
+}
+
+/** Blog posts, newest first. */
+export async function getPosts(): Promise<Post[]> {
+  const all = await getCollection('blog');
+  return all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
 /** Areas grouped by region, in the order of `regions` in site.ts. */

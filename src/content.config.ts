@@ -111,6 +111,39 @@ const regions = defineCollection({
   }),
 });
 
+/**
+ * Blog posts: one folder per post in src/content/blog/<post-url>/ containing index.md plus its photos.
+ * Photos go in the Markdown as ![Describe the photo](./photo-name.webp). A line in *italics* right
+ * under a photo is shown as its caption.
+ */
+const blog = defineCollection({
+  loader: glob({ pattern: '*/index.md', base: './src/content/blog' }),
+  schema: ({ image }) =>
+    z.object({
+      /** The headline at the top of the post. */
+      title: z.string(),
+      /** Google title (keep under ~60 characters with " | Painters Touch" added). */
+      metaTitle: z.string(),
+      /** Google description (under ~160 characters). */
+      metaDescription: z.string(),
+      /** One or two sentences for the blog list and under the headline. */
+      excerpt: z.string(),
+      /** Publish date, e.g. 2026-10-15 */
+      date: z.coerce.date(),
+      /** Optional: last time the post was meaningfully updated. */
+      updated: z.coerce.date().optional(),
+      hero: image(),
+      heroAlt: z.string(),
+      /** Optional photo credit shown under the main photo, e.g. "Photo: Pexels" */
+      heroCredit: z.string().optional(),
+      /** The search phrases this post is written for (for your reference; not shown on the page). */
+      keywords: z.array(z.string()).default([]),
+      /** Optional: slug of the service page this post supports (e.g. "accent-walls"). */
+      service: z.string().optional(),
+      faqs: z.array(faq).default([]),
+    }),
+});
+
 /** Reviews: edit src/data/reviews.json */
 const reviews = defineCollection({
   loader: file('./src/data/reviews.json'),
@@ -128,4 +161,4 @@ const reviews = defineCollection({
   }),
 });
 
-export const collections = { projects, services, areas, regions, reviews };
+export const collections = { projects, services, areas, regions, blog, reviews };
