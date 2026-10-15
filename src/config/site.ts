@@ -150,7 +150,7 @@ export const site = {
     /** Google Analytics 4 Measurement ID, e.g. 'G-ABC123XYZ9' */
     ga4MeasurementId: '',
     /** Google Search Console "HTML tag" verification: paste only the content="..." value. */
-    googleSiteVerification: '',
+    googleSiteVerification: '7qFPayo2tyqslJcMR56pIyQPk5QTJAFu4bz9hXngiZk',
   },
 
   /** Share image used when your site is shared on social media. Generated automatically; replace with your own file in /public if you like. */
