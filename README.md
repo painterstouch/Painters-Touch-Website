@@ -271,6 +271,8 @@ From now on, every time you upload an edited file to GitHub, Netlify rebuilds an
 
 The spam trap (a hidden field that only bots fill in) is already built in, and Netlify filters spam on top of that. Photo uploads are limited to 8 MB. The form says so.
 
+*Is your domain shown from another host (like Hostinger) and not from Netlify?* Netlify Forms only work on Netlify, so quotes would be lost. The form therefore sends quotes to the Netlify address you put in `form.netlifyUrl` in `site.ts`, and Netlify records and emails them as usual. Keep that Netlify project alive, and clear `netlifyUrl` (set it to `''`) once your domain is served by Netlify itself.
+
 *Formspree instead of Netlify Forms?* Sign up at <https://formspree.io>, create a form, and copy the ID from its address (`formspree.io/f/XXXXXXX`). In `site.ts`, set `form.provider` to `'formspree'` and put the ID in `form.formspreeId`. Photo uploads need a paid Formspree plan.
 
 ### Connect your own domain

@@ -137,6 +137,12 @@ export const site = {
     provider: 'netlify' as 'netlify' | 'formspree',
     /** Only for Formspree: the ID from your form URL https://formspree.io/f/XXXXXXX */
     formspreeId: '',
+    /**
+     * Only needed when the website is shown from a host that is NOT Netlify (for example Hostinger).
+     * Netlify Forms only work on Netlify, so the form then sends each quote to this Netlify address,
+     * which records it and emails you. Leave it '' when your domain is served by Netlify itself.
+     */
+    netlifyUrl: 'https://nimble-sable-a57690.netlify.app',
   },
 
   // ── Tracking and verification (leave '' to turn off) ───────────────────

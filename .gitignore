@@ -27,3 +27,6 @@ Thumbs.db
 
 # raw project photos waiting to be sorted (not published)
 incoming/
+
+# upload bundles made for other hosts
+*.zip

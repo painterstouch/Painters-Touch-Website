@@ -17,6 +17,7 @@ const honeypot = isNetlify ? 'bot-field' : '_gotcha';
     enctype="multipart/form-data"
     data-quote-form
     data-provider={site.form.provider}
+    data-endpoint={isNetlify && site.form.netlifyUrl ? site.form.netlifyUrl : undefined}
     data-netlify={isNetlify ? 'true' : undefined}
     netlify-honeypot={isNetlify ? 'bot-field' : undefined}
     class="grid gap-5 sm:grid-cols-2"
@@ -109,6 +110,12 @@ const honeypot = isNetlify ? 'bot-field' : '_gotcha';
     const button = form.querySelector<HTMLButtonElement>('[data-submit]')!;
     const MAX_BYTES = 8 * 1024 * 1024;
 
+    // When this page is not served by Netlify (e.g. Hostinger), send the quote to the Netlify address instead:
+    // Netlify records it and emails it. The browser can't read Netlify's reply across sites, so it just sends it.
+    const endpoint = form.dataset.endpoint ? new URL(form.getAttribute('action') ?? '/', form.dataset.endpoint) : null;
+    const crossSite = Boolean(endpoint) && endpoint!.origin !== location.origin;
+    if (crossSite) form.action = endpoint!.href;
+
     // Pre-select the project type when arriving from a service page (?service=interior-painting).
     const wanted = new URLSearchParams(location.search).get('service');
     const select = form.querySelector<HTMLSelectElement>('select[name="project-type"]');
@@ -142,8 +149,10 @@ const honeypot = isNetlify ? 'bot-field' : '_gotcha';
             method: 'POST',
             body: data,
             headers: form.dataset.provider === 'formspree' ? { Accept: 'application/json' } : undefined,
+            mode: crossSite ? 'no-cors' : undefined,
           });
-          if (!response.ok) throw new Error(String(response.status));
+          // A cross-site reply is opaque (status 0), so only a failed connection counts as an error there.
+          if (!crossSite && !response.ok) throw new Error(String(response.status));
         }
         const first = String(data.get('name') ?? '').trim().split(/\s+/)[0];
         const nameSlot = success.querySelector('[data-first-name]');
