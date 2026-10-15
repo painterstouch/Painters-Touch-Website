@@ -54,10 +54,10 @@ export const site = {
   // ── Links ──────────────────────────────────────────────────────────────
   social: {
     instagram: 'https://www.instagram.com/painterstouch.nyc/',
-    /** Your Google Business Profile page (the listing people find on Google/Maps). */
-    googleBusinessProfile: 'https://g.page/r/YOUR_GBP_ID',
-    /** Direct "leave a review" link: Google Business Profile → "Ask for reviews" → copy link. */
-    googleReview: 'https://g.page/r/YOUR_GBP_ID/review',
+    /** Your Google Business Profile page (the listing people find on Google/Maps). Leave '' until you have one. */
+    googleBusinessProfile: '',
+    /** Direct "leave a review" link: Google Business Profile → "Ask for reviews" → copy link. The review buttons stay hidden while this is ''. */
+    googleReview: '',
     /** Leave blank ('') to hide. */
     facebook: '',
     yelp: '',
@@ -94,8 +94,8 @@ export const site = {
     jobsCompleted: '247',
     /** Set to true ONLY if you carry liability insurance. Until then "Fully insured" stays hidden. */
     insured: false,
-    /** Brands you actually use, for the FAQ. Example: 'Benjamin Moore and Sherwin-Williams' */
-    paintBrands: '[PAINT BRANDS YOU USE]',
+    /** Brands you actually use, for the FAQ. Example: 'Benjamin Moore and Sherwin-Williams'. Leave '' to leave brand names out. */
+    paintBrands: '',
   },
 
   /** How quickly you promise to answer quote requests (shown after the form is sent). */

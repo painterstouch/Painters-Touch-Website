@@ -1,5 +1,5 @@
 ---
-import { getAreasByRegion } from '../lib/data';
+import { getAreasByRegion, getRegions, regionPageFor } from '../lib/data';
 import { regionSlug } from '../lib/utils';
 
 interface Props {
@@ -9,14 +9,23 @@ interface Props {
   compact?: boolean;
 }
 const { showNearby = true, compact = false } = Astro.props;
-const groups = await getAreasByRegion();
+const [groups, regions] = await Promise.all([getAreasByRegion(), getRegions()]);
 ---
 
 <div>
   {
     groups.map(([region, areas]) => (
       <div id={regionSlug(region)} class="grid gap-3 border-t border-line py-5 md:grid-cols-12 md:gap-8 md:py-6">
-        <h3 class="text-xl md:col-span-3 md:pt-1 md:text-2xl">{region}</h3>
+        <h3 class="text-xl md:col-span-3 md:pt-1 md:text-2xl">
+          {(() => {
+            const page = regionPageFor(regions, region);
+            return page ? (
+              <a href={`/areas/${page.id}/`} class="no-underline hover:underline decoration-2 underline-offset-4">{region}</a>
+            ) : (
+              region
+            );
+          })()}
+        </h3>
         {compact ? (
           // Phones: each neighborhood is a thumb-sized chip. Larger screens: a plain line of links.
           <ul class="flex flex-wrap gap-2 md:col-span-9 md:gap-x-7 md:gap-y-2 md:pt-1.5">

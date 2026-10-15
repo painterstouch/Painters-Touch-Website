@@ -1,0 +1,165 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from './PageHeader.astro';
+import FaqList from './FaqList.astro';
+import MapEmbed from './MapEmbed.astro';
+import ProjectCard from './ProjectCard.astro';
+import CtaBand from './CtaBand.astro';
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { chipAt, getAreas, getProjects, getRegions, getServices, type Region } from '../lib/data';
+import { faqSchema } from '../lib/schema';
+import { pageTitle, phoneHref } from '../lib/utils';
+
+interface Props {
+  region: Region;
+}
+
+const { region } = Astro.props;
+const { data } = region;
+const { Content } = await render(region);
+
+const [services, allAreas, allProjects, allRegions] = await Promise.all([getServices(), getAreas(), getProjects(), getRegions()]);
+// The neighborhood pages inside this borough / region.
+const areas = allAreas.filter((a) => data.covers.includes(a.data.region));
+const areaIds = new Set(areas.map((a) => a.id));
+const projects = allProjects.filter((p) => p.data.area && areaIds.has(p.data.area)).slice(0, 3);
+const otherRegions = allRegions.filter((r) => r.id !== region.id);
+const showRegionLabel = data.covers.length > 1;
+
+const schema: object[] = data.faqs.length ? [faqSchema(data.faqs)] : [];
+---
+
+<BaseLayout title={pageTitle(data.metaTitle)} description={data.metaDescription} {schema}>
+  <PageHeader
+    title={`Interior painters in ${data.name}`}
+    lead={data.lead}
+    crumbs={[
+      { name: 'Service Areas', href: '/areas/' },
+      { name: data.name, href: `/areas/${region.id}/` },
+    ]}
+  >
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a href="/contact/" class="btn btn-primary">Get a Free Quote in {data.name}</a>
+      <a href={phoneHref()} class="btn btn-outline">
+        <Icon name="phone" size={20} />
+        Call Now
+        <span class="sr-only">{site.phone}</span>
+      </a>
+    </div>
+  </PageHeader>
+
+  <section class="section">
+    <div class="wrap grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="prose-site lg:col-span-7">
+        <Content />
+      </div>
+      <div class="lg:col-span-5">
+        <h2 class="text-2xl">Painting in {data.name}: what to expect</h2>
+        <ul class="mt-6 space-y-6">
+          {
+            data.highlights.map((h, i) => (
+              <li class="flex gap-4" style={`--chip:${chipAt(i).hex}`}>
+                <span class="chip-bar" aria-hidden="true" />
+                <div>
+                  <h3 class="text-lg">{h.title}</h3>
+                  <p class="mt-1 text-ink-soft">{h.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {
+    areas.length > 0 && (
+      <section class="band-white section" aria-labelledby="areas-heading">
+        <div class="wrap">
+          <h2 id="areas-heading" class="max-w-2xl">{data.name} neighborhoods we paint in</h2>
+          <ul class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {areas.map((area) => (
+              <li class="border-t border-line pt-5">
+                <h3 class="text-xl">
+                  <a href={`/areas/${area.id}/`} class="no-underline hover:underline decoration-2 underline-offset-4">
+                    Painters in {area.data.name}
+                  </a>
+                </h3>
+                {showRegionLabel && <p class="mt-1 text-sm font-semibold text-ink-soft">{area.data.region}</p>}
+                <p class="mt-2 text-ink-soft">{area.data.lead}</p>
+              </li>
+            ))}
+          </ul>
+          <p class="mt-8 max-w-2xl text-ink-soft">
+            Don’t see your neighborhood? We paint all over {data.name}. <a href="/contact/" class="link">Ask us</a> about your
+            address.
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="services-heading">
+    <div class="wrap">
+      <h2 id="services-heading" class="max-w-2xl">Painting services in {data.name}</h2>
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          services.map((s) => (
+            <li class="border-t border-line pt-5">
+              <h3 class="text-xl">
+                <a href={`/services/${s.id}/`} class="no-underline hover:underline decoration-2 underline-offset-4">{s.data.title}</a>
+              </h3>
+              <p class="mt-2 text-ink-soft">{s.data.summary}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    projects.length > 0 && (
+      <section class="band-white section" aria-labelledby="projects-heading">
+        <div class="wrap">
+          <h2 id="projects-heading" class="max-w-2xl">Recent work in {data.name}</h2>
+          <ul class="mt-8 grid grid-cols-2 gap-x-3 gap-y-7 sm:mt-10 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3">
+            {projects.map((project) => <li><ProjectCard project={project} /></li>)}
+          </ul>
+          <p class="mt-8"><a href="/work/" class="link hit inline-block">See all our work</a></p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    data.faqs.length > 0 && (
+      <section class:list={['section', projects.length > 0 ? '' : 'band-white']} aria-labelledby="faq-heading">
+        <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <h2 id="faq-heading" class="lg:col-span-4">Painting in {data.name}: common questions</h2>
+          <div class="lg:col-span-8"><FaqList faqs={data.faqs} /></div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="map-heading">
+    <div class="wrap">
+      <h2 id="map-heading" class="max-w-xl">Our service area in {data.name}</h2>
+      <MapEmbed query={data.mapQuery} zoom={data.mapZoom} title={`Map of ${data.name}`} class="mt-8" />
+      <p class="mt-8">
+        <strong>We also paint in:</strong>{' '}
+        {otherRegions.map((r, i) => (
+          <>
+            <a href={`/areas/${r.id}/`} class="link">{r.data.name}</a>
+            {i < otherRegions.length - 1 ? ', ' : ''}
+          </>
+        ))}
+        . <a href="/areas/" class="link">View all service areas</a>.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand heading={`Painting in ${data.name}? Get a flat-rate price.`} />
+</BaseLayout>

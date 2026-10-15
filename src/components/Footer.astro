@@ -2,10 +2,10 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { site } from '../config/site';
-import { getAreasByRegion, getServices } from '../lib/data';
-import { formatHours, phoneHref, regionSlug } from '../lib/utils';
+import { getAreasByRegion, getRegions, getServices } from '../lib/data';
+import { formatHours, phoneHref } from '../lib/utils';
 
-const [services, regionGroups] = await Promise.all([getServices(), getAreasByRegion()]);
+const [services, regionGroups, regions] = await Promise.all([getServices(), getAreasByRegion(), getRegions()]);
 const areaCount = regionGroups.reduce((n, [, list]) => n + list.length, 0);
 const hours = formatHours();
 const social = [
@@ -82,10 +82,10 @@ const linkClass = 'block py-2.5 text-white/85 no-underline hover:text-white hove
       <h2 class="text-base font-extrabold" style="font-stretch:112%">Service areas</h2>
       <ul class="mt-2 text-[0.95rem] md:mt-4 md:space-y-2">
         {
-          regionGroups.map(([region]) => (
+          regions.map((region) => (
             <li>
-              <a href={`/areas/#${regionSlug(region)}`} class={linkClass}>
-                {region}
+              <a href={`/areas/${region.id}/`} class={linkClass}>
+                {region.data.name}
               </a>
             </li>
           ))

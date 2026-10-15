@@ -16,7 +16,7 @@ import { pageTitle } from '../lib/utils';
 const [services, featured, reviews] = await Promise.all([getServices(), getFeaturedProjects(3), getReviews()]);
 ---
 
-<BaseLayout title={pageTitle('Interior Painters in NYC, Flat-Rate Quotes')} description={site.description}>
+<BaseLayout title={pageTitle('Painters in NYC & Long Island, Flat-Rate Quotes')} description={site.description}>
   <Hero />
   <TrustStrip />
 
@@ -87,10 +87,14 @@ const [services, featured, reviews] = await Promise.all([getServices(), getFeatu
         }
       </ul>
       <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 md:mt-8">
-        <a href={site.social.googleReview} target="_blank" rel="noopener" class="btn btn-ink">
-          <Icon name="star" size={18} />
-          Review us on Google
-        </a>
+        {
+          site.social.googleReview && (
+            <a href={site.social.googleReview} target="_blank" rel="noopener" class="btn btn-ink">
+              <Icon name="star" size={18} />
+              Review us on Google
+            </a>
+          )
+        }
         <a href="/reviews/" class="link hit inline-block self-start">Read all reviews</a>
       </div>
     </div>

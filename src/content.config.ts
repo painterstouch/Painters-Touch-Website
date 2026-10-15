@@ -87,6 +87,30 @@ const areas = defineCollection({
   }),
 });
 
+/**
+ * Borough / region pages (e.g. /areas/queens/): one Markdown file per page in src/content/regions/.
+ * Each one gathers the neighborhood pages from the regions it covers.
+ */
+const regions = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/regions' }),
+  schema: z.object({
+    /** Shown in headings, e.g. "Queens" or "Long Island" */
+    name: z.string(),
+    /** Which `regions` from src/config/site.ts this page covers, e.g. ["Nassau County", "Suffolk County"] */
+    covers: z.array(z.string()).min(1),
+    order: z.number().default(100),
+    metaTitle: z.string(),
+    metaDescription: z.string(),
+    /** One sentence under the page title. */
+    lead: z.string(),
+    highlights: z.array(z.object({ title: z.string(), text: z.string() })).min(2),
+    mapQuery: z.string(),
+    /** Google Maps zoom: 10 or 11 fits a borough. */
+    mapZoom: z.number().default(11),
+    faqs: z.array(faq).default([]),
+  }),
+});
+
 /** Reviews: edit src/data/reviews.json */
 const reviews = defineCollection({
   loader: file('./src/data/reviews.json'),
@@ -104,4 +128,4 @@ const reviews = defineCollection({
   }),
 });
 
-export const collections = { projects, services, areas, reviews };
+export const collections = { projects, services, areas, regions, reviews };

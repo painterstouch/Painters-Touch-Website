@@ -1,0 +1,9 @@
+# Hostinger reads this file. Send every visitor and search engine to one address,
+# https://painterstouch.site, so Google doesn't see the www version as a second copy.
+RewriteEngine On
+
+RewriteCond %{HTTP_HOST} ^www\.painterstouch\.site$ [NC]
+RewriteRule ^(.*)$ https://painterstouch.site/$1 [R=301,L]
+
+# Show the site's own "page not found" page instead of Hostinger's.
+ErrorDocument 404 /404.html

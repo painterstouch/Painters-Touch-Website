@@ -3,7 +3,7 @@ title: Interior Painting
 shortTitle: Interior painting
 order: 1
 summary: Walls, ceilings, trim and doors painted with clean lines and the prep that makes the finish last.
-metaTitle: Interior Painters in NYC
+metaTitle: "Interior Painting Services: Walls, Ceilings & Trim"
 metaDescription: Interior painting in NYC for walls, ceilings, trim and doors. Flat-rate quotes, on-time crews, furniture and floors protected. Get a free quote.
 lead: Walls, ceilings, trim and doors, finished with sharp lines on protected floors and furniture.
 serviceType: Interior painting

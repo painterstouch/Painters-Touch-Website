@@ -6,6 +6,7 @@ export type Service = CollectionEntry<'services'>;
 export type Area = CollectionEntry<'areas'>;
 export type Project = CollectionEntry<'projects'>;
 export type Review = CollectionEntry<'reviews'>;
+export type Region = CollectionEntry<'regions'>;
 
 /** The paint chips used across the site (names are just for fun, not real paint colors). */
 export const chips = [
@@ -35,6 +36,17 @@ export async function getAreas(): Promise<Area[]> {
       a.data.order - b.data.order ||
       a.data.name.localeCompare(b.data.name),
   );
+}
+
+/** Borough / region pages (e.g. /areas/queens/), in their `order`. */
+export async function getRegions(): Promise<Region[]> {
+  const all = await getCollection('regions');
+  return all.sort((a, b) => a.data.order - b.data.order);
+}
+
+/** The region page that covers a region name from site.ts (e.g. "Nassau County" → Long Island), if any. */
+export function regionPageFor(regions: Region[], regionName: string): Region | undefined {
+  return regions.find((r) => r.data.covers.includes(regionName));
 }
 
 /** Areas grouped by region, in the order of `regions` in site.ts. */

@@ -30,10 +30,14 @@ const stats = reviewStats(reviews);
         </p>
       )
     }
-    <a href={site.social.googleReview} target="_blank" rel="noopener" class="btn btn-ink mt-8">
-      <Icon name="star" size={18} />
-      Leave a review on Google
-    </a>
+    {
+      site.social.googleReview && (
+        <a href={site.social.googleReview} target="_blank" rel="noopener" class="btn btn-ink mt-8">
+          <Icon name="star" size={18} />
+          Leave a review on Google
+        </a>
+      )
+    }
   </PageHeader>
 
   <section class="section">
@@ -43,10 +47,14 @@ const stats = reviewStats(reviews);
       <ul class="columns-1 gap-5 md:columns-2 lg:columns-3 [&>li]:mb-5 [&>li]:break-inside-avoid">
         {reviews.map((review) => <li id={review.id}><ReviewCard review={review} /></li>)}
       </ul>
-      <p class="mt-10 max-w-xl text-ink-soft">
-        Had a good experience? A short Google review helps neighbors find us, and we read every one.
-        <a href={site.social.googleReview} target="_blank" rel="noopener" class="link">Leave a review on Google</a>.
-      </p>
+      {
+        site.social.googleReview && (
+          <p class="mt-10 max-w-xl text-ink-soft">
+            Had a good experience? A short Google review helps neighbors find us, and we read every one.
+            <a href={site.social.googleReview} target="_blank" rel="noopener" class="link">Leave a review on Google</a>.
+          </p>
+        )
+      }
     </div>
   </section>
 

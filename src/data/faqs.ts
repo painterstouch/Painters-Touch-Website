@@ -29,14 +29,17 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: 'What paint brands do you use?',
-    a: `We use professional-quality paints from brands such as ${site.trust.paintBrands}. If you have a specific brand or color in mind, tell us and we will price it into your quote. We can also recommend finishes for each surface, from flat on ceilings to semi-gloss on trim.`,
+    a: `${site.trust.paintBrands ? `We use professional-quality paints from brands such as ${site.trust.paintBrands}.` : 'We use professional-quality paints chosen for each surface and room.'} If you have a specific brand or color in mind, tell us and we will price it into your quote. We can also recommend finishes for each surface, from flat on ceilings to semi-gloss on trim.`,
   },
-  {
-    q: 'Are you insured?',
-    a: site.trust.insured
-      ? 'Yes. We carry liability insurance on every job, and we can provide proof of coverage if your building or landlord asks for it.'
-      : '[INSURANCE ANSWER. Set trust.insured to true in src/config/site.ts once your policy is active, and this answer is filled in for you.]',
-  },
+  // Only listed once trust.insured is set to true in src/config/site.ts.
+  ...(site.trust.insured
+    ? [
+        {
+          q: 'Are you insured?',
+          a: 'Yes. We carry liability insurance on every job, and we can provide proof of coverage if your building or landlord asks for it.',
+        },
+      ]
+    : []),
   {
     q: 'Can you paint in a co-op or condo building?',
     a: 'Yes. Many NYC buildings have rules for contractors, such as approved work hours, elevator reservations and protection for common areas. Tell us about your building when you request a quote and we will plan around its requirements.',
