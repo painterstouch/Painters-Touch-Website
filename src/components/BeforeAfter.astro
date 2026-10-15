@@ -31,6 +31,8 @@ const stageAspect = aspect ?? ratio.toFixed(3);
 const widths = [480, 640, 800, 1200, 1600];
 const common = {
   formats: ['avif', 'webp'] as ('avif' | 'webp')[],
+  // The old-browser fallback is WebP too, instead of a (much larger) PNG copy of every photo.
+  fallbackFormat: 'webp' as const,
   widths,
   sizes,
   loading: eager ? ('eager' as const) : ('lazy' as const),

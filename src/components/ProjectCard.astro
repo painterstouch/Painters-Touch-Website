@@ -20,6 +20,7 @@ const photoCount = (before ? 2 : 1) + gallery.length;
       src={after}
       alt={afterAlt ?? `${title}, finished ${roomType.toLowerCase()} painting project in ${location}`}
       formats={['avif', 'webp']}
+      fallbackFormat="webp"
       widths={[320, 480, 640, 960]}
       {sizes}
       loading={eager ? 'eager' : 'lazy'}
