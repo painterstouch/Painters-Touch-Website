@@ -1,4 +1,6 @@
 ---
+import Icon from './Icon.astro';
+
 interface Props {
   /** What to show on the map, e.g. "Astoria, Queens, NY". */
   query: string;
@@ -8,17 +10,60 @@ interface Props {
   class?: string;
 }
 const { query, title, zoom, class: className = '' } = Astro.props;
-// Google Maps embed: no API key needed. The map only loads when it scrolls near the screen.
+// Google Maps embed (no API key needed). It only loads when the visitor clicks "Show map", so Google's
+// cookies and scripts never load for people who don't use it (keeps the page fast and Lighthouse happy).
 const src = `https://www.google.com/maps?q=${encodeURIComponent(query)}${zoom ? `&z=${zoom}` : ''}&output=embed`;
+const openUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+// The place name shown on the card, e.g. "Astoria, Queens, NY".
+const label = query;
 ---
 
-<div class:list={['overflow-hidden rounded-[2px] border border-line bg-white', className]}>
-  <iframe
-    src={src}
-    title={title}
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    class="block h-[22rem] w-full border-0 sm:h-[26rem]"
-    allowfullscreen
-  ></iframe>
+<div
+  class:list={['map-embed relative overflow-hidden rounded-[2px] border border-line bg-white', className]}
+  data-map-src={src}
+  data-map-title={title}
+>
+  <div class="map-facade flex h-[22rem] w-full flex-col items-center justify-center gap-5 px-5 text-center sm:h-[26rem]">
+    <span class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-tape shadow-sm ring-1 ring-line">
+      <Icon name="pin" size={28} />
+    </span>
+    <p class="max-w-md text-xl font-bold">{label}</p>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <button type="button" class="btn btn-ink map-load" aria-label={`Show map: ${title}`}>Show map</button>
+      <a href={openUrl} target="_blank" rel="noopener" class="btn btn-outline">Open in Google Maps</a>
+    </div>
+    <p class="max-w-sm text-sm text-ink-soft">The map loads from Google when you click "Show map".</p>
+  </div>
 </div>
+
+<style>
+  /* A light street-grid pattern so the card reads as a map before it loads. */
+  .map-facade {
+    background-color: var(--color-plaster);
+    background-image:
+      linear-gradient(rgb(23 23 25 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(23 23 25 / 0.06) 1px, transparent 1px),
+      linear-gradient(35deg, transparent 48%, rgb(23 23 25 / 0.08) 48%, rgb(23 23 25 / 0.08) 52%, transparent 52%);
+    background-size:
+      28px 28px,
+      28px 28px,
+      100% 100%;
+  }
+</style>
+
+<script>
+  // Swap the card for the real Google map when "Show map" is clicked.
+  for (const wrap of document.querySelectorAll<HTMLElement>('.map-embed')) {
+    const button = wrap.querySelector<HTMLButtonElement>('.map-load');
+    button?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = wrap.dataset.mapSrc ?? '';
+      iframe.title = wrap.dataset.mapTitle ?? 'Map';
+      iframe.className = 'block h-[22rem] w-full border-0 sm:h-[26rem]';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.allowFullscreen = true;
+      wrap.replaceChildren(iframe);
+      iframe.focus();
+    });
+  }
+</script>
