@@ -10,6 +10,10 @@ import { site } from './src/config/site.ts';
 export default defineConfig({
   site: site.url,
   trailingSlash: 'always',
+  build: {
+    // Put the site's CSS inside each page instead of a separate file, so pages can draw without waiting for it.
+    inlineStylesheets: 'always',
+  },
   integrations: [
     sitemap({
       // Keep utility pages out of the sitemap.

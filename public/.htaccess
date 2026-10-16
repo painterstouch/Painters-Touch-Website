@@ -7,3 +7,11 @@ RewriteRule ^(.*)$ https://painterstouch.site/$1 [R=301,L]
 
 # Show the site's own "page not found" page instead of Hostinger's.
 ErrorDocument 404 /404.html
+
+# Browser caching for images, fonts and icons in the site root (30 days).
+# Files in /_astro/ get a longer rule from public/_astro/.htaccess.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2|webp|avif|jpg|jpeg|png|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>

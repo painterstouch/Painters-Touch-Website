@@ -3,7 +3,7 @@
  *  - Links to other websites open in a new tab with rel="noopener".
  *  - Photos get several sizes (srcset) so phones download smaller files.
  */
-const POST_IMAGE_WIDTHS = [480, 800, 1200];
+const POST_IMAGE_WIDTHS = [480, 640, 800, 1200];
 // The article column is about 700px wide on desktop; full width minus the page gutter on phones.
 const POST_IMAGE_SIZES = '(min-width: 1024px) 700px, calc(100vw - 2.5rem)';
 

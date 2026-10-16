@@ -141,6 +141,15 @@ async function logoFile(colors, file) {
 await logoFile(dark, 'public/logo.png');
 await logoFile(light, 'public/logo-light.png');
 
+// Small WebP copies at the size the header/footer shows them (48px tall), plus a sharper 2x version.
+// Logo.astro uses these automatically when they exist (faster than the full PNG).
+for (const name of ['logo', 'logo-light']) {
+  for (const width of [208, 416]) {
+    await sharp(`public/${name}.png`).resize({ width }).webp({ quality: width > 208 ? 75 : 90, effort: 6 }).toFile(`public/${name}-${width}.webp`);
+    console.log('wrote', `public/${name}-${width}.webp`);
+  }
+}
+
 // Tab icon and phone home-screen icon: the roller "P" on a soft tile.
 const pMark = await render(P_MARK, dark, { keep: notTheA });
 async function tile(size, file, { rounded }) {

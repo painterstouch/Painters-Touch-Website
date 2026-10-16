@@ -1,0 +1,4 @@
+# Files in /_astro/ get a new name every time they change, so browsers can keep them for a year.
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</IfModule>

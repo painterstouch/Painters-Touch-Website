@@ -24,6 +24,10 @@ if (hasLogoFile) {
   const meta = await sharp(path.join(process.cwd(), 'public', src)).metadata();
   displayWidth = Math.round((DISPLAY_HEIGHT * (meta.width ?? 1)) / (meta.height ?? 1));
 }
+// Right-sized WebP copies (made by `npm run logo`): logo-208.webp for normal screens, logo-416.webp for sharp ones.
+const webp1x = src.replace(/\.png$/, '-208.webp');
+const webp2x = src.replace(/\.png$/, '-416.webp');
+const hasWebp = hasLogoFile && onDisk(webp1x) && onDisk(webp2x);
 // Without a light version, a dark-text logo sits on a white plate so it stays readable.
 const needsPlate = light && hasLogoFile && !lightFile;
 ---
@@ -33,7 +37,8 @@ const needsPlate = light && hasLogoFile && !lightFile;
     hasLogoFile ? (
       <span class:list={[needsPlate && 'rounded-sm bg-white px-3 py-2']}>
         <img
-          src={src}
+          src={hasWebp ? webp1x : src}
+          srcset={hasWebp ? `${webp1x} 1x, ${webp2x} 2x` : undefined}
           alt={site.name}
           width={displayWidth}
           height={DISPLAY_HEIGHT}

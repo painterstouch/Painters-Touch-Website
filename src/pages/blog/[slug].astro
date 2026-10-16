@@ -210,10 +210,10 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
 </style>
 
 <script>
+  // Show the button once the post's title area has scrolled out of view (no scroll listener needed).
   const btn = document.getElementById('back-to-top');
-  if (btn) {
-    const update = () => btn.classList.toggle('is-visible', window.scrollY > 800);
-    update();
-    window.addEventListener('scroll', update, { passive: true });
+  const top = document.getElementById('top');
+  if (btn && top && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => btn.classList.toggle('is-visible', !entry.isIntersecting)).observe(top);
   }
 </script>
