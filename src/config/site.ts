@@ -91,7 +91,7 @@ export const site = {
   trust: {
     // Update these as they grow. Add a "+" (like '250+') if you'd rather not change them every month.
     yearsInBusiness: '5',
-    jobsCompleted: '247',
+    jobsCompleted: '250+',
     /** Set to true ONLY if you carry liability insurance. Until then "Fully insured" stays hidden. */
     insured: false,
     /** Brands you actually use, for the FAQ. Example: 'Benjamin Moore and Sherwin-Williams'. Leave '' to leave brand names out. */
@@ -112,6 +112,20 @@ export const site = {
       { name: '[NAME]', role: '[ROLE, e.g. Owner and lead painter]', bio: '[One or two sentences about this person.]' },
       { name: '[NAME]', role: '[ROLE]', bio: '[One or two sentences about this person.]' },
     ] as { name: string; role: string; bio: string }[],
+  },
+
+  // ── Blog author ──────────────────────────────────────────────────────
+  /** Shown as the byline on every blog post, with a link to the author's page (/about/<slug>/). */
+  author: {
+    name: 'Ivan Vashchenko',
+    slug: 'ivan-vashchenko',
+    role: 'Owner and founder',
+    /** Short bio under each post and on the author page. Only true facts. {years} and {jobs} are filled in from `trust` above. */
+    bio: [
+      'Ivan founded Painters Touch after years of painting, starting with graffiti and murals as a teenager before a close friend brought him into interior painting.',
+      'He has led Painters Touch for {years} years and {jobs} jobs across NYC and Long Island, and he is famously picky about sharp cut lines and smooth finishes. His favorite color? White Dove (Benjamin Moore OC-17). Yes, a white.',
+    ],
+    knowsAbout: ['Interior painting', 'Accent walls', 'Lime wash', 'Skim coating', 'Drywall and plaster repair', 'Color selection'],
   },
 
   // ── Colors (hex codes) ─────────────────────────────────────────────────

@@ -76,3 +76,10 @@ export function jsonLd(data: unknown) {
 export function pageTitle(part: string) {
   return `${part} | ${site.name}`;
 }
+
+/** The blog author's bio paragraphs, with {years} and {jobs} filled in from site.trust. */
+export function authorBio() {
+  return site.author.bio.map((p) =>
+    p.replace('{years}', site.trust.yearsInBusiness).replace('{jobs}', site.trust.jobsCompleted),
+  );
+}

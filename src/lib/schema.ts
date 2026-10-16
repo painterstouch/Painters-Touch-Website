@@ -1,12 +1,14 @@
 /** JSON-LD (structured data) builders. Everything is generated from site.ts and the content collections. */
 import { site } from '../config/site';
-import { absoluteUrl, phoneE164, publicFileExists } from './utils';
+import { absoluteUrl, authorBio, phoneE164, publicFileExists } from './utils';
 import type { Area, Review, Service } from './data';
 import { reviewStats } from './data';
 
 const DAY_URL = (d: string) => `https://schema.org/${d}`;
 
 export const BUSINESS_ID = `${site.url}/#business`;
+export const AUTHOR_URL = `/about/${site.author.slug}/`;
+export const AUTHOR_ID = `${site.url}${AUTHOR_URL}#person`;
 
 export function localBusinessSchema(opts: { areas: Area[]; services: Service[]; reviews: Review[] }) {
   const stats = reviewStats(opts.reviews);
@@ -140,7 +142,23 @@ export function blogPostingSchema(post: {
     mainEntityOfPage: absoluteUrl(post.url),
     datePublished: post.datePublished.toISOString(),
     dateModified: (post.dateModified ?? post.datePublished).toISOString(),
-    author: { '@id': BUSINESS_ID },
+    author: { '@type': 'Person', '@id': AUTHOR_ID, name: site.author.name, url: absoluteUrl(AUTHOR_URL) },
     publisher: { '@id': BUSINESS_ID },
+  };
+}
+
+/** The blog author (bylines and the author page). */
+export function personSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': AUTHOR_ID,
+    name: site.author.name,
+    jobTitle: `${site.author.role}, ${site.name}`,
+    description: authorBio().join(' '),
+    url: absoluteUrl(AUTHOR_URL),
+    worksFor: { '@id': BUSINESS_ID },
+    knowsAbout: site.author.knowsAbout,
+    ...(site.social.instagram ? { sameAs: [site.social.instagram] } : {}),
   };
 }

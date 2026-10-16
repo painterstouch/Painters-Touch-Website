@@ -7,8 +7,8 @@ import FaqList from '../../components/FaqList.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { site } from '../../config/site';
 import { getPosts, getServices } from '../../lib/data';
-import { blogPostingSchema, faqSchema } from '../../lib/schema';
-import { pageTitle } from '../../lib/utils';
+import { AUTHOR_URL, blogPostingSchema, faqSchema, personSchema } from '../../lib/schema';
+import { authorBio, pageTitle } from '../../lib/utils';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -17,7 +17,10 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { data } = post;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+// Table of contents: every H2 in the post, with jump links (long posts only).
+const toc = headings.filter((h) => h.depth === 2);
+const showToc = toc.length >= 3;
 
 const [services, allPosts] = await Promise.all([getServices(), getPosts()]);
 const service = services.find((s) => s.id === data.service);
@@ -26,6 +29,8 @@ const morePosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
 const url = `/blog/${post.id}/`;
 // A 1200 x 630 JPEG of the main photo for link previews (Facebook, iMessage, Google).
 const og = await getImage({ src: data.hero, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
+// Twitter/X cards use a 1200 x 600 version.
+const tw = await getImage({ src: data.hero, width: 1200, height: 600, fit: 'cover', format: 'jpg' });
 const dateFmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -39,12 +44,21 @@ const schema: object[] = [
     dateModified: data.updated,
   }),
 ];
+schema.push(personSchema());
 if (data.faqs.length) schema.push(faqSchema(data.faqs));
 ---
 
-<BaseLayout title={pageTitle(data.metaTitle)} description={data.metaDescription} ogType="article" ogImage={og.src} {schema}>
+<BaseLayout
+  title={pageTitle(data.metaTitle)}
+  description={data.metaDescription}
+  ogDescription={data.excerpt}
+  ogType="article"
+  ogImage={og.src}
+  twitterImage={tw.src}
+  {schema}
+>
   <article>
-    <header class="page-head border-b border-line pt-6 pb-8 sm:pt-10 sm:pb-12">
+    <header id="top" class="page-head border-b border-line pt-6 pb-8 sm:pt-10 sm:pb-12">
       <div class="wrap">
         <Breadcrumbs
           items={[
@@ -55,7 +69,8 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
         <h1 class="mt-4 max-w-4xl sm:mt-6">{data.title}</h1>
         <p class="lead mt-4 sm:mt-5">{data.excerpt}</p>
         <p class="mt-5 text-sm text-ink-soft">
-          By the {site.name} team ·{' '}
+          By <a href={AUTHOR_URL} class="font-semibold text-ink underline decoration-ink/30 hover:decoration-ink">{site.author.name}</a>,{' '}
+          {site.author.role.toLowerCase()} of {site.name} ·{' '}
           <time datetime={iso(data.date)}>{dateFmt(data.date)}</time>
           {
             data.updated && (
@@ -87,8 +102,33 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
 
     <section class="section pt-10 sm:pt-12">
       <div class="wrap grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <div class="prose-site prose-post lg:col-span-8">
-          <Content />
+        <div class="min-w-0 lg:col-span-8">
+          {
+            showToc && (
+              <nav aria-labelledby="toc-heading" class="mb-10 max-w-[40rem] border border-line bg-white p-5 sm:p-6">
+                <p id="toc-heading" class="font-bold">On this page</p>
+                <ol class="mt-3 list-decimal space-y-1 pl-5">
+                  {toc.map((h) => (
+                    <li>
+                      <a href={`#${h.slug}`} class="inline-block py-1 underline decoration-ink/30 underline-offset-4 hover:decoration-ink">{h.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+          <div class="prose-site prose-post">
+            <Content />
+          </div>
+
+          <aside aria-labelledby="author-heading" class="mt-12 max-w-[40rem] border-t border-line pt-8">
+            <p id="author-heading" class="text-sm font-bold uppercase tracking-wide text-ink-soft">About the author</p>
+            <p class="mt-2 text-xl font-bold">
+              <a href={AUTHOR_URL} class="no-underline hover:underline decoration-2 underline-offset-4">{site.author.name}</a>,{' '}
+              <span class="font-normal">{site.author.role.toLowerCase()} of {site.name}</span>
+            </p>
+            {authorBio().map((p) => <p class="mt-3 text-ink-soft">{p}</p>)}
+          </aside>
         </div>
         {
           service && (
@@ -140,4 +180,40 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
   }
 
   <CtaBand service={data.service} />
+
+  {/* Back-to-top button: appears after scrolling down; sits above the phone call/quote bar on small screens. */}
+  <a
+    href="#top"
+    id="back-to-top"
+    aria-label="Back to top"
+    class="back-to-top fixed right-4 bottom-24 z-30 inline-flex h-12 w-12 items-center justify-center rounded-full border border-line bg-white text-ink shadow-md no-underline lg:bottom-8"
+  >
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+  </a>
 </BaseLayout>
+
+<style>
+  .back-to-top {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .back-to-top.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html) {
+      scroll-behavior: smooth;
+    }
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('back-to-top');
+  if (btn) {
+    const update = () => btn.classList.toggle('is-visible', window.scrollY > 800);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+</script>

@@ -1,7 +1,7 @@
 ---
 title: "Interior Painting Cost: What You'll Really Pay in 2026"
-metaTitle: "Interior Painting Cost: Per Room & Per Sq Ft"
-metaDescription: "Interior painting cost runs about $2–$6 per square foot. See prices per room and for a 1,500 sq ft house, what drives the cost, and why NYC costs more."
+metaTitle: "Interior Painting Cost: Per Room & Sq Ft"
+metaDescription: "Interior painting cost runs about $2–$6 per square foot. See real prices per room and per house, what drives the cost, and how to compare painting quotes."
 excerpt: "Painters love saying \"it depends\" (sorry). So let's brush up on what interior painting actually costs: per square foot, per room, per house, and why NYC costs extra."
 date: 2026-10-15
 hero: ./interior-painting-cost-painter-rolling-wall.webp
@@ -21,7 +21,7 @@ faqs:
   - q: How much does it cost to paint a 1,500 sq ft house interior?
     a: About $3,000 to $9,000 for a full interior, based on the national $2 to $6 per square foot range reported in 2026. Where you land depends on wall condition, ceiling height, color changes and whether ceilings, trim and doors are included.
   - q: Is it cheaper to paint a house interior yourself?
-    a: In cash, yes, because labor is most of what you pay a painter for. But you still buy the paint, primer and tools, and you spend the time. A single room is a fair DIY project. Ceilings, tall walls, plaster repairs and whole homes are usually worth hiring out. Your weekend, sadly, is not free.
+    a: In cash, yes, because labor is most of what you pay a painter for, though you still buy the paint, primer and tools. A single room is a fair DIY project. Ceilings, tall walls, plaster repairs and whole homes are usually worth hiring out (your weekend, sadly, is not free).
   - q: Do painters charge by the hour or by the job?
     a: Both exist. Hourly pricing means the bill grows if the job runs long. We price every job as one flat rate in writing, covering prep, paint, labor and cleanup, so the number does not change once work starts. No meter running, ever.
   - q: Does a painting quote include the paint?
@@ -30,11 +30,7 @@ faqs:
     a: A single room is often finished in a day or two, depending on the size of the room and how much prep it needs. A full apartment typically takes several days.
 ---
 
-Ask a painter what interior painting costs and you'll hear "it depends" (we know, we roll our eyes at that answer too, and painters are professionally good at rolling). So let's skip the shrug and brush up on real numbers.
-
-**Interior painting cost typically runs $2 to $6 per square foot of floor space, or about $2,000 to $6,000 for every 1,000 square feet, based on 2026 national cost data.** Most single rooms cost $400 to $1,500. In New York City, expect the higher end of those ranges.
-
-For a real-world NYC number: at Painters Touch, a bedroom usually runs **$400 to $1,500**, and our average job, from a single room to a full home, comes to about **$3,800**.
+Ask a painter what interior painting costs and you'll hear "it depends" (we know, we roll our eyes at that answer too, and painters are professionally good at rolling). So let's skip the shrug and brush up on real numbers: **interior painting cost typically runs $2 to $6 per square foot of floor space, or about $2,000 to $6,000 for every 1,000 square feet, based on 2026 national cost data.** In New York City, expect the higher end of that range. For a real NYC number, a bedroom with us usually runs **$400 to $1,500**.
 
 Grab a coffee. We've got rooms to cover.
 
@@ -44,7 +40,7 @@ Grab a coffee. We've got rooms to cover.
 
 ## Interior painting cost per square foot
 
-The $2 to $6 per square foot range is based on your home's **floor area**, not the wall surface. It's the quick-estimate number that nearly every painter and cost guide lands on.
+That per-square-foot price is based on your home's **floor area**, not the wall surface, and it's the quick estimate nearly every painter starts with.
 
 Think of it like ordering pizza. The size sets the base price, but the toppings decide the bill:
 
@@ -56,11 +52,11 @@ One warning: **cheap square-foot pricing can be misleading.** A per-foot price t
 
 ![Side-by-side photos of the same apartment bedroom before painting, with white walls and covered furniture, and after, with soft aqua walls and a corner window](./bedroom-before-and-after-aqua-repaint.webp)
 
-*A bedroom we repainted in soft aqua. Same room, same window, whole new mood. [See the full project](/work/apartment-bedroom-aqua-repaint/).*
+*A bedroom we repainted in soft aqua. Same room, same window, whole new mood. [See the full soft aqua bedroom project](/work/apartment-bedroom-aqua-repaint/).*
 
 ## How much does it cost to paint a room?
 
-Here's what professional painting costs by room, starting with our own NYC pricing. The other rows are published ranges from other markets, so treat them as a starting point:
+Here's what professional painting costs by room. The first row is our own NYC pricing; the rest are published ranges from other markets:
 
 | Room | Typical cost | Market |
 | --- | --- | --- |
@@ -73,7 +69,7 @@ Here's what professional painting costs by room, starting with our own NYC prici
 
 Why such a wide range on our bedrooms? **Condition and prep.** It's not the room, it's the baggage. Smooth walls staying a similar color sit at the low end. Cracks to fill, patches to sand and prime, or that dark purple from your college years (no judgment) sit at the high end.
 
-On the **labor cost to paint a 12x12 room**: published Boston-area pricing puts a standard 12x12 bedroom at $700 to $900, including walls, ceiling, baseboards, doors and windows. Most of that is labor. A bedroom only needs a few gallons of paint, so you're paying for the hands, not the can.
+That 12x12 row is a good look at the real **labor cost to paint a 12x12 room**: it covers walls, ceiling, baseboards, doors and windows, and nearly all of it is labor (more on why paint is the small part below).
 
 Bathrooms are small but they punch above their weight: cutting in around every fixture, plus moisture-resistant paint. Tiny room, big personality.
 
@@ -81,7 +77,7 @@ Bathrooms are small but they punch above their weight: cutting in around every f
 
 ## Cost to paint a 1,500 sq ft house interior
 
-Using the national $2 to $6 per square foot range, here's what a full interior costs by home size, according to 2026 national data:
+Here's what a full interior costs by home size, according to 2026 national data:
 
 | Home size | Typical interior cost |
 | --- | --- |
@@ -92,7 +88,7 @@ Using the national $2 to $6 per square foot range, here's what a full interior c
 
 Big spread, we know. That's the difference between "fresh coat on good walls" and "so, we found a few surprises behind the couch."
 
-Our own average job at Painters Touch comes to about **$3,800**, across everything from a single room to a full home. For comparison, a large national painting franchise reports an average interior project of **$4,220** over the past year, and 2026 homeowner data puts the average interior job at **$2,021**.
+Our own average job comes to about **$3,800**, across everything from a single room to a full home. For comparison, a large national painting franchise reports **$4,220**, and 2026 homeowner data puts the average at **$2,021**.
 
 ![Hands patching a white wall with spackle using a putty knife and a wide drywall knife](./patching-wall-with-spackle-before-painting.webp)
 
@@ -128,7 +124,9 @@ That's why national averages can look suspiciously low to New Yorkers.
 
 ## How much of the cost is paint?
 
-Less than you'd think. Labor is most of what you pay a painter for. But the paint still matters, because **cheap paint is a false economy.** Bargain paint covers poorly, so you need more of it, plus more coats and more labor. It's the paint version of cheap socks: you end up buying them twice.
+Less than you'd think. A typical bedroom only needs a few gallons, so most of your bill is time and skill: the prep, the cutting in, two full coats and the cleanup. Paint is the cheap part. Patience is the expensive part.
+
+But the paint still matters, because **cheap paint is a false economy.** Bargain paint covers poorly, so you need more of it, plus more coats and more labor. It's the paint version of cheap socks: you end up buying them twice.
 
 That doesn't mean buying the fanciest can on the shelf, either. We use Sherwin-Williams and Benjamin Moore and pick the product for the room, not the price tag.
 
@@ -142,9 +140,9 @@ The painting itself is the fast part. Moving and covering furniture, protecting 
 
 ## DIY vs hiring a painter
 
-Painting it yourself saves the labor, the biggest part of the bill. It costs you paint, primer, tools, a weekend or two, a sore neck and at least one debate about whether "Agreeable Gray" is actually agreeable.
+Painting it yourself saves the labor, the biggest part of the bill. It costs you paint, primer, tools, a weekend or two (with the windows open, since the [EPA recommends plenty of fresh air](https://www.epa.gov/indoor-air-quality-iaq/volatile-organic-compounds-impact-indoor-air-quality) around paint fumes), a sore neck and at least one debate about whether "Agreeable Gray" is actually agreeable.
 
-**Worth doing yourself:** a single room, an [accent wall](/blog/accent-wall-painting/), or a refresh in the same color.
+**Worth doing yourself:** a single room, an [accent wall](/blog/accent-wall-painting/), or a refresh in the same color. (Leftover paint can't just go down the drain; NYC's sanitation department explains [how to get rid of leftover paint](https://www.nyc.gov/site/dsny/collection/get-rid-of/harmful-household-products.page).)
 **Worth hiring out:** ceilings, tall walls and stairwells, plaster repairs, popcorn ceilings, dark color changes, whole apartments, and anything on a deadline like a move-in or listing date.
 
 ![Bathroom prepped for painting, with blue painter's tape masking the edges of a lit mirror and white vanity, the light switch plate removed, and a drill and a red paint bucket with a brush on the counter](./bathroom-prep-tape-around-mirror-and-vanity.webp)

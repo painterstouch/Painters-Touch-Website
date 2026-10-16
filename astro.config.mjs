@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import { satteri } from '@astrojs/markdown-satteri';
+import { postContentPlugin } from './src/lib/markdown-plugins.mjs';
 import { site } from './src/config/site.ts';
 
 // https://astro.build/config
@@ -14,6 +16,10 @@ export default defineConfig({
       filter: (page) => !page.includes('/contact/thanks/'),
     }),
   ],
+  markdown: {
+    // Blog posts: outside links open in a new tab; photos get several sizes (srcset). See src/lib/markdown-plugins.mjs.
+    processor: satteri({ hastPlugins: [postContentPlugin()] }),
+  },
   vite: {
     plugins: [tailwindcss()],
   },

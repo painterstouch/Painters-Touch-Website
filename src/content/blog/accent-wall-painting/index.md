@@ -1,7 +1,7 @@
 ---
 title: "Accent Wall Painting: Ideas, Colors and How to Paint One"
-metaTitle: "Accent Wall Painting: Ideas, Colors & How-To"
-metaDescription: "Accent wall painting made simple: how to pick the wall, the best accent wall paint colors, bedroom and two-tone ideas, and how to paint an accent wall step by step."
+metaTitle: "Accent Wall Painting: Ideas, Colors, How-To"
+metaDescription: "Accent wall painting made simple: pick the right wall, choose a color that works, and paint it with sharp lines, step by step. See ideas and pro tips."
 excerpt: "One bold wall can change a whole room. Here's how to pick the wall, pick the color and paint it with sharp, clean lines (we've got a lot of coat to cover)."
 date: 2026-10-15
 updated: 2026-10-15
@@ -46,7 +46,7 @@ Below: how to pick the wall, the accent wall paint colors that work, bedroom and
 
 ![Tall living room wall painted deep teal, with a wall sconce, white ceiling beams, white baseboard and dark hardwood floors](./deep-teal-accent-wall-nyc-apartment.webp)
 
-*A deep teal accent wall we painted in a New York apartment. White beams, white trim, and a wall that's clearly the main character. [See the full project](/work/apartment-accent-wall-deep-teal/).*
+*A deep teal accent wall we painted in a New York apartment. White beams, white trim, and a wall that's clearly the main character. [See the full deep teal accent wall project](/work/apartment-accent-wall-deep-teal/).*
 
 ## Why accent walls with paint work so well
 
@@ -146,7 +146,7 @@ Want to paint an accent wall yourself? Here's the process we follow on every job
 
 ### 1. Prep the wall
 
-Move the furniture and cover the floor. Fill holes and dents with spackle, let it dry, and sand it smooth. Wipe off the dust. Dark colors are honest: they'll show every dent you've been ignoring, so this step matters most.
+Move the furniture and cover the floor. Fill holes and dents with spackle, let it dry, and sand it smooth. Wipe off the dust. Home built before 1978? Old paint layers may contain lead, so read the [EPA's lead-safe painting guidance](https://www.epa.gov/lead/renovation-repair-and-painting-program) before you sand. Dark colors are honest: they'll show every dent you've been ignoring, so this step matters most.
 
 ### 2. Prime if needed
 
@@ -162,7 +162,7 @@ Tape where the accent wall meets the neighboring walls, the ceiling and the base
 
 ### 4. Cut in, then roll
 
-Brush a 2 to 3 inch band along the tape, corners and baseboard. Then roll the wall in sections from top to bottom, keeping a "wet edge" so each section blends into the last. Roll a loose W, then even it out with straight vertical passes.
+Open a window first: paint gives off fumes, and the [EPA recommends plenty of fresh air](https://www.epa.gov/indoor-air-quality-iaq/volatile-organic-compounds-impact-indoor-air-quality) while you work. Then brush a 2 to 3 inch band along the tape, corners and baseboard. Then roll the wall in sections from top to bottom, keeping a "wet edge" so each section blends into the last. Roll a loose W, then even it out with straight vertical passes.
 
 ### 5. Apply the second coat
 
@@ -181,7 +181,7 @@ A single wall is a very doable DIY project. Where people run into trouble:
 - **Tall walls.** Double-height walls and stairwells need the right ladders or scaffolding.
 - **Plaster walls and lime wash.** Old plaster needs more patching than you'd expect, and lime wash takes practice.
 
-If any of those sound familiar, our [accent wall painting service](/services/accent-walls/) covers color advice, prep, primer and two finish coats in one flat-rate price. We paint across [Manhattan](/areas/manhattan/), [Brooklyn](/areas/brooklyn/), [Queens](/areas/queens/) and the rest of New York City and Long Island.
+Wondering what it costs to hire out? Our [interior painting cost guide](/blog/interior-painting-cost/) breaks it down. If any of those sound familiar, our [accent wall painting service](/services/accent-walls/) covers color advice, prep, primer and two finish coats in one flat-rate price. We paint across [Manhattan](/areas/manhattan/), [Brooklyn](/areas/brooklyn/), [Queens](/areas/queens/) and the rest of New York City and Long Island.
 
 ## The bottom line
 

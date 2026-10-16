@@ -22,6 +22,10 @@ interface Props {
   noBusinessSchema?: boolean;
   ogType?: 'website' | 'article';
   ogImage?: string;
+  /** Optional: a punchier description for social shares (defaults to the meta description). */
+  ogDescription?: string;
+  /** Optional: a 1200 x 600 image for Twitter/X cards (defaults to ogImage). */
+  twitterImage?: string;
 }
 
 const {
@@ -32,10 +36,13 @@ const {
   noBusinessSchema = false,
   ogType = 'website',
   ogImage = site.ogImage,
+  ogDescription = description,
+  twitterImage,
 } = Astro.props;
 
 const canonical = absoluteUrl(Astro.url.pathname);
 const image = absoluteUrl(ogImage);
+const twImage = absoluteUrl(twitterImage ?? ogImage);
 
 const [areas, services, reviews] = await Promise.all([getAreas(), getServices(), getReviews()]);
 const graph = noBusinessSchema
@@ -80,7 +87,7 @@ const gsc = site.analytics.googleSiteVerification;
     <meta property="og:site_name" content={site.name} />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={image} />
     <meta property="og:image:width" content="1200" />
@@ -88,8 +95,8 @@ const gsc = site.analytics.googleSiteVerification;
     <meta property="og:image:alt" content={`${site.name}: ${site.tagline}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
+    <meta name="twitter:description" content={ogDescription} />
+    <meta name="twitter:image" content={twImage} />
 
     {brandCss && <style is:inline set:html={`html:root{${brandCss}}`} />}
 
