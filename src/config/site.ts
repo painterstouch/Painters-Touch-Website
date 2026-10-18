@@ -36,14 +36,14 @@ export const site = {
   address: {
     show: false,
     street: '',
-    city: 'New York',
+    city: 'Queens',
     region: 'NY',
     postalCode: '',
     country: 'US',
   },
 
   /** Rough center of your service area (used for search engines, not shown). */
-  geo: { lat: 40.7128, lng: -74.006 },
+  geo: { lat: 40.7282, lng: -73.7949 },
 
   /** Business hours. Add, remove or change lines. Use 24-hour times like '17:30'. */
   hours: [
