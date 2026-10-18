@@ -47,8 +47,7 @@ export const site = {
 
   /** Business hours. Add, remove or change lines. Use 24-hour times like '17:30'. */
   hours: [
-    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '18:00' },
-    { days: ['Saturday'], opens: '09:00', closes: '14:00' },
+    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '08:00', closes: '22:00' },
   ] as { days: string[]; opens: string; closes: string }[],
 
   // ── Links ──────────────────────────────────────────────────────────────
