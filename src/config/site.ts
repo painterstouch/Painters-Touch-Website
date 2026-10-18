@@ -55,9 +55,9 @@ export const site = {
   social: {
     instagram: 'https://www.instagram.com/painterstouch.nyc/',
     /** Your Google Business Profile page (the listing people find on Google/Maps). Leave '' until you have one. */
-    googleBusinessProfile: '',
+    googleBusinessProfile: 'https://maps.app.goo.gl/E5YNQBiYKg7jRUkQ6',
     /** Direct "leave a review" link: Google Business Profile → "Ask for reviews" → copy link. The review buttons stay hidden while this is ''. */
-    googleReview: '',
+    googleReview: 'https://g.page/r/CdEF15E-yNq1EBM/review',
     /** Leave blank ('') to hide. */
     facebook: '',
     yelp: '',
