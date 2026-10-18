@@ -59,7 +59,7 @@ export const site = {
     googleReview: 'https://g.page/r/CdEF15E-yNq1EBM/review',
     /** Leave blank ('') to hide. */
     facebook: '',
-    yelp: '',
+    yelp: 'https://www.yelp.com/biz/painters-touch-jamaica',
   },
 
   // ── Where you work ─────────────────────────────────────────────────────
