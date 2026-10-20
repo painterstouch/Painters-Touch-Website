@@ -19,6 +19,7 @@ services:
   - interior-painting
   - apartment-condo-painting
   - drywall-repair-prep
+  - trim-painting
 mapQuery: Forest Hills, Queens, NY
 faqs:
   - q: Do you paint the woodwork in older Forest Hills homes?

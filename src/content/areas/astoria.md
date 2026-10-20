@@ -20,6 +20,7 @@ services:
   - interior-painting
   - apartment-condo-painting
   - drywall-repair-prep
+  - tenant-turnover-painting
 mapQuery: Astoria, Queens, NY
 faqs:
   - q: Do you paint two-family houses in Astoria?

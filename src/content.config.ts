@@ -60,6 +60,8 @@ const services = defineCollection({
     serviceType: z.string(),
     /** Show the sheen guide (flat → gloss) on this page. */
     sheenGuide: z.boolean().default(false),
+    /** Optional: project folder names to show on this page (otherwise projects tagged with this service are used). */
+    featuredProjects: z.array(z.string()).default([]),
   }),
 });
 
@@ -158,6 +160,10 @@ const reviews = defineCollection({
     text: z.string(),
     /** Optional: show this one first on the home page. */
     featured: z.boolean().default(false),
+    /** Optional: service page slugs this review is about; those pages show it first. */
+    services: z.array(z.string()).default([]),
+    /** Optional: where the review was posted, e.g. "Google". */
+    source: z.string().optional(),
   }),
 });
 

@@ -9,7 +9,7 @@ interface Props {
   preview?: boolean;
 }
 const { review, preview = false } = Astro.props;
-const { name, neighborhood, rating, date, text } = review.data;
+const { name, neighborhood, rating, date, text, source } = review.data;
 const when = formatReviewDate(date);
 const trimmed = preview && text.length > 280;
 ---
@@ -22,6 +22,6 @@ const trimmed = preview && text.length > 280;
   </blockquote>
   <figcaption class="mt-5 border-t border-line pt-4 text-sm">
     <span class="block font-bold">{name}{neighborhood ? `, ${neighborhood}` : ''}</span>
-    {when && <span class="text-ink-soft">{when}</span>}
+    {(when || source) && <span class="text-ink-soft">{[source && `${source} review`, when].filter(Boolean).join(' · ')}</span>}
   </figcaption>
 </figure>

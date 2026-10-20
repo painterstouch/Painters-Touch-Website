@@ -20,6 +20,7 @@ services:
   - interior-painting
   - drywall-repair-prep
   - apartment-condo-painting
+  - trim-painting
 mapQuery: Garden City, NY
 faqs:
   - q: Do you travel from NYC to Garden City?

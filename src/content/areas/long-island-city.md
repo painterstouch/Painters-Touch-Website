@@ -20,6 +20,7 @@ services:
   - apartment-condo-painting
   - interior-painting
   - commercial-painting
+  - tenant-turnover-painting
 mapQuery: Long Island City, Queens, NY
 faqs:
   - q: Can you work within my Long Island City building's contractor rules?

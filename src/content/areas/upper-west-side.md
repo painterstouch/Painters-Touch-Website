@@ -19,6 +19,7 @@ services:
   - apartment-condo-painting
   - interior-painting
   - drywall-repair-prep
+  - ceiling-painting
 mapQuery: Upper West Side, Manhattan, NY
 faqs:
   - q: Can you paint behind radiators?

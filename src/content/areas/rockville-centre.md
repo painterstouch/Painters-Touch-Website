@@ -21,6 +21,7 @@ services:
   - interior-painting
   - drywall-repair-prep
   - apartment-condo-painting
+  - trim-painting
 mapQuery: Rockville Centre, NY
 faqs:
   - q: How do you protect hardwood floors while painting?

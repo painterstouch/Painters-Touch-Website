@@ -20,6 +20,7 @@ services:
   - interior-painting
   - drywall-repair-prep
   - apartment-condo-painting
+  - ceiling-painting
 mapQuery: Park Slope, Brooklyn, NY
 faqs:
   - q: Can you paint brownstone stairwells and tall ceilings in Park Slope?

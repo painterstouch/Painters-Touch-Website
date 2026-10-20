@@ -19,6 +19,7 @@ services:
   - interior-painting
   - apartment-condo-painting
   - drywall-repair-prep
+  - ceiling-painting
 mapQuery: Upper East Side, Manhattan, NY
 faqs:
   - q: How do you protect common areas in doorman buildings?

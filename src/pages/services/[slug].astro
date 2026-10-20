@@ -5,10 +5,11 @@ import PageHeader from '../../components/PageHeader.astro';
 import SheenGuide from '../../components/SheenGuide.astro';
 import FaqList from '../../components/FaqList.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import ReviewCard from '../../components/ReviewCard.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Icon from '../../components/Icon.astro';
 import { site } from '../../config/site';
-import { getAreas, getProjects, getServices } from '../../lib/data';
+import { getAreas, getProjects, getRegions, getReviews, getServices } from '../../lib/data';
 import { faqSchema, serviceSchema } from '../../lib/schema';
 import { pageTitle, phoneHref } from '../../lib/utils';
 
@@ -21,10 +22,26 @@ const { service } = Astro.props;
 const { data } = service;
 const { Content } = await render(service);
 
-const [allServices, allAreas, allProjects] = await Promise.all([getServices(), getAreas(), getProjects()]);
+const [allServices, allAreas, allProjects, regions, allReviews] = await Promise.all([
+  getServices(),
+  getAreas(),
+  getProjects(),
+  getRegions(),
+  getReviews(),
+]);
 const related = data.related.map((id) => allServices.find((s) => s.id === id)).filter((s) => s !== undefined);
 const areas = allAreas.filter((a) => a.data.services.includes(service.id));
-const projects = allProjects.filter((p) => p.data.service === service.id).slice(0, 3);
+// Hand-picked projects first (featuredProjects in the service file), otherwise projects tagged with this service.
+const projects = (
+  data.featuredProjects.length
+    ? data.featuredProjects.map((id) => allProjects.find((p) => p.id === id)).filter((p) => p !== undefined)
+    : allProjects.filter((p) => p.data.service === service.id)
+).slice(0, 3);
+// Three reviews: ones about this service first, then the rest.
+const reviews = [
+  ...allReviews.filter((r) => r.data.services.includes(service.id)),
+  ...allReviews.filter((r) => !r.data.services.includes(service.id)),
+].slice(0, 3);
 
 const schema: object[] = [serviceSchema(service, areas.map((a) => `${a.data.name}, ${a.data.region}`))];
 if (data.faqs.length) schema.push(faqSchema(data.faqs));
@@ -84,6 +101,31 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
   </section>
 
   {
+    reviews.length > 0 && (
+      <section class="band-white section" aria-labelledby="reviews-heading">
+        <div class="wrap">
+          <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <h2 id="reviews-heading" class="max-w-xl">What our customers say</h2>
+            <a href="/reviews/" class="link hit flex-none self-start sm:self-auto">Read all reviews</a>
+          </div>
+          <ul class="mt-8 grid gap-5 md:grid-cols-3">
+            {reviews.map((review) => (
+              <li><ReviewCard review={review} preview /></li>
+            ))}
+          </ul>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href={`/contact/?service=${service.id}`} class="btn btn-primary">Get a Free Quote</a>
+            <a href={phoneHref()} class="btn btn-outline">
+              <Icon name="phone" size={20} />
+              Call or text {site.phone}
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
     data.sheenGuide && (
       <section class="band-white section" aria-labelledby="sheen-heading">
         <div class="wrap">
@@ -120,22 +162,28 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
     )
   }
 
-  {
-    areas.length > 0 && (
-      <section class="section" aria-labelledby="areas-heading">
-        <div class="wrap">
-          <h2 id="areas-heading" class="max-w-2xl">Where we offer {data.shortTitle.toLowerCase()}</h2>
-          <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-0.5 sm:mt-8">
-            {areas.map((area) => (
-              <li>
-                <a href={`/areas/${area.id}/`} class="link inline-flex min-h-11 items-center">{area.data.name}, {area.data.region}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    )
-  }
+  <section class="section" aria-labelledby="areas-heading">
+    <div class="wrap">
+      <h2 id="areas-heading" class="max-w-2xl">Where we offer {data.shortTitle.toLowerCase()}</h2>
+      <p class="lead mt-4">Based in Queens, painting across {site.areaSummary}.</p>
+      <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-0.5 sm:mt-8">
+        {regions.map((r) => (
+          <li>
+            <a href={`/areas/${r.id}/`} class="link inline-flex min-h-11 items-center font-bold">{r.data.name}</a>
+          </li>
+        ))}
+      </ul>
+      {areas.length > 0 && (
+        <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-0.5">
+          {areas.map((area) => (
+            <li>
+              <a href={`/areas/${area.id}/`} class="link inline-flex min-h-11 items-center">{area.data.name}, {area.data.region}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
 
   {
     related.length > 0 && (

@@ -19,6 +19,7 @@ services:
   - interior-painting
   - commercial-painting
   - apartment-condo-painting
+  - tenant-turnover-painting
 mapQuery: Williamsburg, Brooklyn, NY
 faqs:
   - q: Should I paint my exposed brick wall?
