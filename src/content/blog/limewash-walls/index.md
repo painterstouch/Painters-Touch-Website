@@ -60,7 +60,7 @@ What makes limewash walls special is the **movement**. Instead of one flat, even
 
 ## Limewash vs paint
 
-| | Limewash | Regular paint |
+| Feature | Limewash | Regular paint |
 | --- | --- | --- |
 | **Look** | Soft, cloudy, textured, with depth | Solid, even color |
 | **Finish** | Very matte and chalky | Flat to high gloss |

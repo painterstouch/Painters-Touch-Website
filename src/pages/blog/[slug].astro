@@ -93,8 +93,8 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
           alt={data.heroAlt}
           formats={['avif', 'webp']}
           fallbackFormat="webp"
-          widths={[640, 960, 1280, 1600]}
-          sizes="(min-width: 1100px) 1024px, 100vw"
+          widths={[480, 640, 720, 960, 1280, 1600]}
+          sizes={heroIsTall ? "(min-width: 640px) 400px, calc(100vw - 2.5rem)" : "(min-width: 1100px) 1024px, calc(100vw - 2.5rem)"}
           class:list={[
             'rounded-[2px]',
             heroIsTall ? 'mx-auto h-auto max-h-[44rem] w-auto max-w-full' : 'aspect-[16/10] w-full object-cover',
