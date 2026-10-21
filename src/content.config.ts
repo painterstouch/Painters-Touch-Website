@@ -136,6 +136,8 @@ const blog = defineCollection({
       updated: z.coerce.date().optional(),
       hero: image(),
       heroAlt: z.string(),
+      /** Optional: a wide photo for link previews (Facebook, Google). Defaults to the hero. Useful when the hero is a tall phone photo. */
+      socialImage: image().optional(),
       /** Optional photo credit shown under the main photo, e.g. "Photo: Pexels" */
       heroCredit: z.string().optional(),
       /** The search phrases this post is written for (for your reference; not shown on the page). */

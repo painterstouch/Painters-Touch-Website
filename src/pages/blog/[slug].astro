@@ -28,9 +28,12 @@ const morePosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
 
 const url = `/blog/${post.id}/`;
 // A 1200 x 630 JPEG of the main photo for link previews (Facebook, iMessage, Google).
-const og = await getImage({ src: data.hero, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
+const social = data.socialImage ?? data.hero;
+const og = await getImage({ src: social, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
 // Twitter/X cards use a 1200 x 600 version.
-const tw = await getImage({ src: data.hero, width: 1200, height: 600, fit: 'cover', format: 'jpg' });
+const tw = await getImage({ src: social, width: 1200, height: 600, fit: 'cover', format: 'jpg' });
+// Tall (phone) hero photos are shown in full, not cropped to a wide frame.
+const heroIsTall = data.hero.height > data.hero.width;
 const dateFmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -84,7 +87,7 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
     </header>
 
     <div class="wrap pt-8 sm:pt-10">
-      <figure class="max-w-5xl">
+      <figure class:list={['max-w-5xl', heroIsTall && 'text-center']}>
         <Picture
           src={data.hero}
           alt={data.heroAlt}
@@ -92,7 +95,10 @@ if (data.faqs.length) schema.push(faqSchema(data.faqs));
           fallbackFormat="webp"
           widths={[640, 960, 1280, 1600]}
           sizes="(min-width: 1100px) 1024px, 100vw"
-          class="aspect-[16/10] w-full rounded-[2px] object-cover"
+          class:list={[
+            'rounded-[2px]',
+            heroIsTall ? 'mx-auto h-auto max-h-[44rem] w-auto max-w-full' : 'aspect-[16/10] w-full object-cover',
+          ]}
           loading="eager"
           fetchpriority="high"
         />

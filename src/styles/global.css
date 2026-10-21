@@ -344,12 +344,14 @@
   }
 
   /* ── Blog posts: photos, captions and tables inside the article text ── */
+  /* Photos always show in full (no cropping). Tall phone photos are limited in height and centered. */
   .prose-post img {
     display: block;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     height: auto;
-    max-height: 34rem;
-    object-fit: cover;
+    max-height: 42rem;
+    margin-inline: auto;
     border-radius: 2px;
   }
   .prose-post p:has(> img) {
